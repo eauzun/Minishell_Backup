@@ -1,0 +1,86 @@
+#include "../minishell.h"
+
+void	syntax_error(const char *msg)
+{
+	write(2, msg, ft_strlen(msg));
+	g_exit_code(258);
+}
+
+int	count_args(char **args)
+{
+	int	count;
+
+	count = 0;
+	while (args && args[count])
+		count++;
+	return (count);
+}
+
+static void	free_args(char **args)
+{
+	int	i;
+
+	if (!args)
+		return ;
+	i = 0;
+	while (args[i])
+	{
+		free(args[i]);
+		i++;
+	}
+	free(args);
+}
+
+void	add_argument(t_command *cmd, char *arg)
+{
+	char	**new_args;
+	int		count;
+	int		i;
+
+	count = count_args(cmd->args);
+	new_args = malloc(sizeof(char *) * (count + 2));
+	if (!new_args)
+		return ;
+	i = 0;
+	while (i < count)
+	{
+		new_args[i] = cmd->args[i];
+		i++;
+	}
+	new_args[i] = ft_strdup(arg);
+	if (!new_args[i])
+	{
+		free_args(cmd->args);
+		free(new_args);
+		cmd->args = NULL;
+		return ;
+	}
+	new_args[i + 1] = NULL;
+	free(cmd->args);
+	cmd->args = new_args;
+}
+
+void	add_redir(t_command *cmd, t_redir_type type, char *file)
+{
+	t_redir	*new_redir;
+	t_redir	*cur;
+
+	new_redir = (t_redir *)malloc(sizeof(*new_redir));
+	if (!new_redir)
+	{
+		free(file);
+		return ;
+	}
+	new_redir->type = type;
+	new_redir->file = file;
+	new_redir->next = NULL;
+	if (!cmd->redirs)
+		cmd->redirs = new_redir;
+	else
+	{
+		cur = cmd->redirs;
+		while (cur->next)
+			cur = cur->next;
+		cur->next = new_redir;
+	}
+}

@@ -1,0 +1,19 @@
+echo hello
+export A=42
+echo "$A"
+unset A
+echo "$A"
+echo a"b"c'd'e"f"
+echo R > r
+echo X >> r 
+cat < r | tr RX rx
+rm -f r
+cat < __nope
+echo start | cat | grep s | wc -c
+cat << EOF
+x $HOME y
+EOF
+cat << 'EOF'
+x $HOME y
+EOF
+exit
