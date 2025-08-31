@@ -160,54 +160,25 @@ void		syntax_error(const char *msg);
 int			count_args(char **args);
 void		add_argument(t_command *cmd, char *arg);
 void		add_redir(t_command *cmd, t_redir_type type, char *file);
-//  EXECUTOR/EXECUTOR.C
-int			set_wait_status(int status);
-int			run_external_command(t_command *cmd, char ***env);
-int			exec_builtin_or_parent(t_command *cmd, char ***env);
+//  EXECUTOR/EXECUTOR.C (YENİ)
 int			execute_single_command(t_command *cmd, char ***env);
-//  EXECUTOR/EXECUTOR2.C
+int			run_external_command(t_command *cmd, char ***env);
+void		execve_command(char *path, t_command *cmd, char **env);
+int			command_not_found(char *cmd);
 void		restore_stdio(int in_fd, int out_fd);
-int			run_child(t_command *cmd, char ***env);
-int			execute_builtin_parent(t_command *cmd, char ***env);
-void		ft_putstr_fd(const char *s, int fd);
-//  EXECUTOR/EXECUTOR_REDIR.C
-int			redirect_in(const char *path);
-int			redirect_out(const char *path, int append);
+//  EXECUTOR/EXECUTOR_BUILTIN.C (YENİ)
+int			is_builtin_command(t_command *cmd);
+int			exec_builtin_parent(t_command *cmd, char ***env);
+int			exec_builtin(t_command *cmd, char ***env);
+int			exec_builtin_or_parent(t_command *cmd, char ***env);
+//  EXECUTOR/EXECUTOR_REDIR.C (YENİ)
 int			apply_redirs(t_command *cmd, char ***env);
-//  EXECUTOR/EXECUTOR_PIPE.C
-void		setup_pipe_ends(int i, int n, int (*pipes)[2], t_command *c);
-void		execute_command(t_command *c, char ***env);
-void		child_process(t_command *c, t_pipe_info *info, char ***env);
-int			wait_all_children(pid_t *pids, int n);
-//  EXECUTOR/EXECUTOR_PIPE2.C
-int			create_pipes(int (*pipes)[2], int total);
-void		spawn_all_children(t_command *cmds, pid_t *pids, t_pipe_info *info,
-				char ***env);
-int			run_pipeline(t_command *cmds, char ***env);
-//  EXECUTOR/EXECUTOR_HEREDOC.C
-int			handle_quit(char *line, int *p);
-char		*process_line(char *line, char **env, int flag);
-int			read_lines(t_command *cur, char **env, int *p);
-int			exec_heredoc(t_command *cur, char **env);
-//  EXECUTOR/EXECUTOR_UTILS.C
-int			contains_slash(const char *str);
-char		*path_join(const char *dir, const char *cmd);
-char		*check_path_seg(const char *path, size_t start, size_t end,
-				const char *cmd);
-char		*find_in_path(const char *cmd, char **env);
+//  EXECUTOR/EXECUTOR_UTILS.C (YENİ)
+char		**ft_split(const char *s, char c);
+void		free_str_array(char **arr);
 //  EXECUTOR/EXECUTOR_UTILS2.C
-int			is_dir(const char *path);
-int			is_reg(const char *path);
-char		**make_sh_argv(t_command *cmd, const char *prog);
-void		print_error(const char *a, const char *b, const char *c);
-//  EXECUTOR/EXECUTOR_UTILS3.C
-void		handle_exec_errors(char *prog, t_command *cmd);
-void		exec_or_die(char *prog, t_command *cmd, char **env);
-int			cmd_count(t_command *cmd);
-void		close_all(int (*pipes)[2], int n);
-//  EXECUTOR/BUILTIN.C
-int			is_builtin(char *cmd);
-int			execute_builtin(t_command *cmd, char ***env);
+char		*find_in_path(char *cmd, char **env);
+
 //  BUILTIN/CD.C
 int			builtin_cd(char **args, char ***env);
 //  BUILTIN/CD_UTILS.C
@@ -233,6 +204,7 @@ int			find_env_var(char **env, char *name);
 int			update_env_var(char ***env, int pos, char *name, char *value);
 char		*create_env_string(char *name, char *value);
 int			get_env_size(char **env);
+void	ft_putstr_fd(char *s, int fd);
 //  BUILTIN/EXPORT_UTILS2.C
 void		free_env_array(char **env);
 char		**copy_env_array(char **env);
@@ -245,5 +217,14 @@ int			builtin_pwd(void);
 //  BUILTIN/UNSET.C
 int			builtin_unset(char **args, char ***env);
 
+// SRC/CLEANUP2.C
+void		cleanup_on_parse_error(t_token *tokens, t_command *partial_cmd);
+void		cleanup_on_expand_error(t_token *tokens);
+void		cleanup_and_return(t_token *tokens, t_command *commands);
 
+// SRC/CLEANUP.C
+void		child_clean_exit(int status);
+void		child_clean_exit_env(int status, char **env);
+void		child_pre_exec_sanitize(void);
+void		child_clean_exit_env_cmds(int status, char **env, t_command *head);
 #endif

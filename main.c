@@ -8,7 +8,7 @@ int	run_command_line(t_command *cmds, char ***env)
 		return (0);
 	}
 	if (cmds->next)
-		return (run_pipeline(cmds, env));
+		// return (run_pipeline(cmds, env));
 	return (execute_single_command(cmds, env));
 }
 
@@ -23,7 +23,7 @@ void	execute_line(const char *line, char ***env, int *exit_status)
 	commands = NULL;
 	tokens = lexer_init(line);
 	if (!tokens)
-		return ;
+		cleanup_and_return(tokens, commands);
 	tokens = expand_tokens(tokens, *env);
 	if (tokens)
 		tokens = remove_empty_unquoted(tokens);

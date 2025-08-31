@@ -1,73 +1,82 @@
 #include "../minishell.h"
 
-int	contains_slash(const char *str)
+static int	count_words(const char *s, char c)
 {
-	size_t	i;
+	int	count;
 
-	i = 0;
-	while (str && str[i])
+	count = 0;
+	while (*s)
 	{
-		if (str[i] == '/')
-			return (1);
+		while (*s && *s == c)
+			s++;
+		if (*s)
+		{
+			count++;
+			while (*s && *s != c)
+				s++;
+		}
+	}
+	return (count);
+}
+
+static void	*free_partial(char **arr, int i)
+{
+	while (i >= 0)
+		free(arr[i--]);
+	free(arr);
+	return (NULL);
+}
+
+static int	fill_word(char ***result, const char **s, char c, int i)
+{
+	int	len;
+
+	while (**s && **s == c)
+		(*s)++;
+	len = 0;
+	while ((*s)[len] && (*s)[len] != c)
+		len++;
+	(*result)[i] = ft_substr(*s, 0, len);
+	if (!(*result)[i])
+		return (0);
+	*s += len;
+	return (1);
+}
+
+char	**ft_split(const char *s, char c)
+{
+	char	**result;
+	int		words;
+	int		i;
+
+	if (!s)
+		return (NULL);
+	words = count_words(s, c);
+	result = malloc(sizeof(char *) * (words + 1));
+	if (!result)
+		return (NULL);
+	i = 0;
+	while (i < words)
+	{
+		if (!fill_word(&result, &s, c, i))
+			return (free_partial(result, i - 1));
 		i++;
 	}
-	return (0);
+	result[i] = NULL;
+	return (result);
 }
 
-char	*path_join(const char *dir, const char *cmd)
+void	free_str_array(char **arr)
 {
-	char	*new_dir;
-	char	*path;
+	int	i;
 
-	new_dir = ft_strjoin(dir, "/");
-	if (!new_dir)
-		return (NULL);
-	path = ft_strjoin(new_dir, cmd);
-	free(new_dir);
-	return (path);
-}
-
-char	*check_path_seg(const char *path, size_t start, size_t end,
-								const char *cmd)
-{
-	char	*seg;
-	char	*cand;
-
-	seg = ft_substr(path, start, end - start);
-	if (!seg)
-		return (NULL);
-	cand = path_join(seg, cmd);
-	free(seg);
-	if (cand && access(cand, F_OK) == 0 && access(cand, X_OK) == 0)
-		return (cand);
-	if (cand)
-		free(cand);
-	return (NULL);
-}
-
-char	*find_in_path(const char *cmd, char **env)
-{
-	char	*path;
-	size_t	i;
-	size_t	j;
-	char	*result;
-
-	path = get_env_value("PATH", env);
-	if (!path)
-		return (NULL);
+	if (!arr)
+		return ;
 	i = 0;
-	while (path[i])
+	while (arr[i])
 	{
-		j = i;
-		while (path[j] && path[j] != ':')
-			j++;
-		result = check_path_seg(path, i, j, cmd);
-		if (result)
-			return (result);
-		if (path[j] == ':')
-			i = j + 1;
-		else
-			i = j;
+		free(arr[i]);
+		i++;
 	}
-	return (NULL);
+	free(arr);
 }

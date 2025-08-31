@@ -1,67 +1,42 @@
 #include "../minishell.h"
 
-int	redirect_in(const char *path)
+static int	apply_single_redir(t_redir *cur, t_command *cmd)
 {
 	int	fd;
 
-	fd = open(path, O_RDONLY);
-	if (fd < 0)
+	fd = -1;
+	if (cur->type == R_IN)
+		fd = open(cur->file, O_RDONLY);
+	else if (cur->type == R_OUT)
+		fd = open(cur->file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	else if (cur->type == R_APPEND)
+		fd = open(cur->file, O_WRONLY | O_CREAT | O_APPEND, 0644);
+	if (fd == -1)
 	{
-		syntax_error("No such file or directory\n");
+		perror(cur->file);
+		cmd->redir_error = 1;
 		return (1);
 	}
-	if (dup2(fd, STDIN_FILENO) < 0)
-	{
-		perror("dup2");
-		close(fd);
-		return (1);
-	}
-	close(fd);
-	return (0);
-}
-
-int	redirect_out(const char *path, int append)
-{
-	int	flags;
-	int	fd;
-
-	flags = O_CREAT | O_WRONLY;
-	if (append)
-		flags |= O_APPEND;
+	if (cur->type == R_IN)
+		dup2(fd, STDIN_FILENO);
 	else
-		flags |= O_TRUNC;
-	fd = open(path, flags, 0644);
-	if (fd < 0)
-	{
-		syntax_error("Permission denied\n");
-		return (1);
-	}
-	if (dup2(fd, STDOUT_FILENO) < 0)
-	{
-		perror("dup2");
-		close(fd);
-		return (1);
-	}
+		dup2(fd, STDOUT_FILENO);
 	close(fd);
 	return (0);
 }
 
 int	apply_redirs(t_command *cmd, char ***env)
 {
-	t_redir	*redir;
+	t_redir	*cur;
 
-	if (cmd->heredoc && exec_heredoc(cmd, *env))
-		return (1);
-	redir = cmd->redirs;
-	while (redir)
+	// if (cmd->heredoc && exec_heredoc(cmd, *env))
+	// 	return (1);
+	cur = cmd->redirs;
+	while (cur)
 	{
-		if (redir->type == R_IN && redirect_in(redir->file))
+		if (apply_single_redir(cur, cmd) != 0)
 			return (1);
-		if (redir->type == R_OUT && redirect_out(redir->file, 0))
-			return (1);
-		if (redir->type == R_APPEND && redirect_out(redir->file, 1))
-			return (1);
-		redir = redir->next;
+		cur = cur->next;
 	}
 	return (0);
 }
