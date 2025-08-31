@@ -161,10 +161,9 @@ int			count_args(char **args);
 void		add_argument(t_command *cmd, char *arg);
 void		add_redir(t_command *cmd, t_redir_type type, char *file);
 
-
 //  BUILTIN/CD.C
 int			builtin_cd(char **args, char ***env);
-void    ft_putstr_fd(char *s, int fd);
+void		ft_putstr_fd(char *s, int fd);
 
 //  BUILTIN/CD_UTILS.C
 char		*get_home_path(char **env);
@@ -201,12 +200,26 @@ int			builtin_pwd(void);
 //  BUILTIN/UNSET.C
 int			builtin_unset(char **args, char ***env);
 
-int	execute_single_command(t_command *cmd, char ***env);
-int	run_external_command(t_command *cmd, char ***env);
+// EXECUTOR/EXECUTOR.C
+int			execute_single_command(t_command *cmd, char ***env);
+int			run_external_command(t_command *cmd, char ***env);
 
+// EXECUTOR/EXECUTOR_REDIR.C
+int			apply_redirs(t_command *cmd, char ***env);
 
+// EXECUTOR/EXECUTOR_BUILTIN.C
+int			is_builtin_command(t_command *cmd);
+int			exec_builtin_parent(t_command *cmd, char ***env);
+int			exec_builtin(t_command *cmd, char ***env);
+int			exec_builtin_or_parent(t_command *cmd, char ***env);
 
+// EXECUTOR/EXECUTOR_UTILS.C
+char		**ft_split(const char *s, char c);
+void		free_str_array(char **arr);
 
-
+// EXECUTOR/EXECUTOR_PATH.C
+char		*find_in_path(char *cmd, char **env);
+int			command_not_found(char *cmd);
+void		execve_command(char *path, t_command *cmd, char **env);
 
 #endif
