@@ -1,6 +1,6 @@
 #include "../minishell.h"
 
-static int	cmd_count(t_command *cmds)
+int	cmd_count(t_command *cmds)
 {
 	int	count;
 
@@ -13,7 +13,7 @@ static int	cmd_count(t_command *cmds)
 	return (count);
 }
 
-static int	*setup_pipes(int count)
+int	*setup_pipes(int count)
 {
 	int	*pipes;
 	int	i;
@@ -42,7 +42,7 @@ static int	*setup_pipes(int count)
 	return (pipes);
 }
 
-static void	cleanup_child(t_command *cmd, t_pipe_info *info)
+void	cleanup_child(t_command *cmd, t_pipe_info *info)
 {
 	int	i;
 
@@ -64,7 +64,7 @@ static void	cleanup_child(t_command *cmd, t_pipe_info *info)
 	}
 }
 
--void	close_all_pipes(int *pipes, int count)
+void	close_all_pipes(int *pipes, int count)
 {
 	int	i;
 

@@ -13,7 +13,10 @@ static void	child_run_external(t_command *cmd, t_pipe_info *info)
 {
 	char	*path;
 
-	path = find_in_path(cmd->args[0], *(info->env));
+	if (ft_strchr(cmd->args[0], '/'))
+		path = ft_strdup(cmd->args[0]);
+	else
+		path = find_in_path(cmd->args[0], *(info->env));
 	if (!path)
 	{
 		ft_putstr_fd("minishell: command not found: ", STDERR_FILENO);
@@ -28,7 +31,8 @@ static void	child_run_external(t_command *cmd, t_pipe_info *info)
 	cleanup_child(cmd, info);
 	exit(126);
 }
-static void	child_run(t_command *cmd, t_pipe_info *info)
+
+void	child_run(t_command *cmd, t_pipe_info *info)
 {
 	if (apply_redirs(cmd, info->env) != 0)
 	{

@@ -66,9 +66,10 @@ typedef struct s_command
 
 typedef struct s_pipe_info
 {
-	int		index;
-	int		total;
-	int		(*pipes)[2];
+	int		n;
+	int		*pipes;
+	pid_t	*pids;
+	char	***env;
 }	t_pipe_info;
 
 // MAIN.C
@@ -232,7 +233,11 @@ int			run_pipeline(t_command *cmds, char ***env);
 
 //  EXECUTOR/PIPE2.C
 void		child_dup2(int oldfd, int newfd, t_command *cmd, t_pipe_info *info);
+void		child_run(t_command *cmd, t_pipe_info *info);
 
 //  EXECUTOR/PIPE3.C
-void close_all_pipes(int *pipes, int count);
+void		close_all_pipes(int *pipes, int count);
+int			cmd_count(t_command *cmds);
+int			*setup_pipes(int count);
+void		cleanup_child(t_command *cmd, t_pipe_info *info);
 #endif
