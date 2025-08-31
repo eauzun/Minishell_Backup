@@ -37,10 +37,12 @@ void	add_argument(t_command *cmd, char *arg)
 	int		count;
 	int		i;
 
+	if (!cmd || !arg)
+		return ;	
 	count = count_args(cmd->args);
 	new_args = malloc(sizeof(char *) * (count + 2));
 	if (!new_args)
-		return ;
+		return ; 
 	i = 0;
 	while (i < count)
 	{
@@ -50,9 +52,7 @@ void	add_argument(t_command *cmd, char *arg)
 	new_args[i] = ft_strdup(arg);
 	if (!new_args[i])
 	{
-		free_args(cmd->args);
 		free(new_args);
-		cmd->args = NULL;
 		return ;
 	}
 	new_args[i + 1] = NULL;
@@ -60,20 +60,10 @@ void	add_argument(t_command *cmd, char *arg)
 	cmd->args = new_args;
 }
 
-void	add_redir(t_command *cmd, t_redir_type type, char *file)
+static void	add_redir_to_list(t_command *cmd, t_redir *new_redir)
 {
-	t_redir	*new_redir;
 	t_redir	*cur;
 
-	new_redir = (t_redir *)malloc(sizeof(*new_redir));
-	if (!new_redir)
-	{
-		free(file);
-		return ;
-	}
-	new_redir->type = type;
-	new_redir->file = file;
-	new_redir->next = NULL;
 	if (!cmd->redirs)
 		cmd->redirs = new_redir;
 	else
@@ -83,4 +73,25 @@ void	add_redir(t_command *cmd, t_redir_type type, char *file)
 			cur = cur->next;
 		cur->next = new_redir;
 	}
+}
+
+void	add_redir(t_command *cmd, t_redir_type type, char *file)
+{
+	t_redir	*new_redir;
+
+	if (!cmd || !file)
+	{
+		free(file);
+		return ;
+	}
+	new_redir = (t_redir *)malloc(sizeof(*new_redir));
+	if (!new_redir)
+	{
+		free(file);
+		return ;
+	}
+	new_redir->type = type;
+	new_redir->file = file;
+	new_redir->next = NULL;
+	add_redir_to_list(cmd, new_redir);
 }

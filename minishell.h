@@ -241,3 +241,11 @@ int			cmd_count(t_command *cmds);
 int			*setup_pipes(int count);
 void		cleanup_child(t_command *cmd, t_pipe_info *info);
 #endif
+
+// UTILS/EXECUTION_LOOP.C
+void	cleanup_tokens_and_commands(t_token *tokens, t_command *commands);
+t_token	*process_lexer(const char *line);
+t_token	*process_expander(t_token *tokens, char **env);
+t_token	*process_quote_removal(t_token *tokens);
+t_command	*process_parser(t_token *tokens);
+

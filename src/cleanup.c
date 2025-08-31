@@ -28,10 +28,7 @@ void child_clean_exit_env_cmds(int status, char **env, t_command *head)
 		free_env_data(env);
 	exit(status & 0xFF);
 }
-
 */
-
-// pipes ve pids serbest bırakma
 void	free_pipes_and_pids(int **pipes, int n, pid_t *pids)
 {
 	int	i;

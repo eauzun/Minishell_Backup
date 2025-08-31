@@ -12,33 +12,36 @@ int	run_command_line(t_command *cmds, char ***env)
 	return (execute_single_command(cmds, env));
 }
 
+static int	execute_commands(t_command *commands, char ***env)
+{
+	int	status;
+
+	if (!commands)
+		return (0);
+	status = run_command_line(commands, env);
+	g_exit_code(status);
+	return (status);
+}
+
 void	execute_line(const char *line, char ***env, int *exit_status)
 {
 	t_token		*tokens;
 	t_command	*commands;
 	int			status;
 
-	status = 0;
-	tokens = NULL;
-	commands = NULL;
-	tokens = lexer_init(line);
+	tokens = process_lexer(line);
 	if (!tokens)
 		return ;
-	tokens = expand_tokens(tokens, *env);
+	tokens = process_expander(tokens, *env);
 	if (!tokens)
 		return ;
-	tokens = remove_empty_unquoted(tokens);
+	tokens = process_quote_removal(tokens);
 	if (!tokens)
 		return ;
-	commands = parse_tokens(tokens);
-	if (commands)
-	{
-		status = run_command_line(commands, env);
-		*exit_status = status;
-		g_exit_code(status);
-		free_commands(commands);
-	}
-	free_token(tokens);
+	commands = process_parser(tokens);
+	status = execute_commands(commands, env);
+	*exit_status = status;
+	cleanup_tokens_and_commands(tokens, commands);
 }
 
 int	minishell(char ***env)
