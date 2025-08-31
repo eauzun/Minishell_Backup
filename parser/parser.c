@@ -32,6 +32,7 @@ char	*gather_word(t_token **cur)
 	*cur = t;
 	return (acc);
 }
+
 static int handle_redirection(t_token **cur, t_command *cmd)
 {
     parse_redirections(cur, cmd);
@@ -75,7 +76,6 @@ t_command *parse_single_command(t_token **tokens)
     return (cmd);
 }
 
-
 t_command	*parse_tokens(t_token *tokens)
 {
 	t_command	*head;
@@ -85,17 +85,13 @@ t_command	*parse_tokens(t_token *tokens)
 	if (!tokens)
 		return (NULL);
 	if (validate_syntax(tokens))
-	{
-		free_token(tokens);
 		return (NULL);
-	}
 	while (tokens)
 	{
 		cmd = parse_single_command(&tokens);
 		if (!cmd)
 		{
 			free_commands(head);
-			free_token(tokens);
 			return (NULL);
 		}
 		link_commands(&head, cmd);

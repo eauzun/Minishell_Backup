@@ -25,20 +25,20 @@ void	execute_line(const char *line, char ***env, int *exit_status)
 	if (!tokens)
 		return ;
 	tokens = expand_tokens(tokens, *env);
-	if (tokens)
-		tokens = remove_empty_unquoted(tokens);
-	if (tokens)
-		commands = parse_tokens(tokens);
+	if (!tokens)
+		return ;
+	tokens = remove_empty_unquoted(tokens);
+	if (!tokens)
+		return ;
+	commands = parse_tokens(tokens);
 	if (commands)
 	{
 		status = run_command_line(commands, env);
 		*exit_status = status;
 		g_exit_code(status);
-	}
-	if (commands)
 		free_commands(commands);
-	if (tokens)
-		free_token(tokens);
+	}
+	free_token(tokens);
 }
 
 int	minishell(char ***env)
