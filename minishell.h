@@ -227,4 +227,12 @@ size_t		ft_strcpy(char *dst, const char *src);
 size_t		ft_strncpy(char *dst, const char *src, size_t n);
 char		*ft_strrchr(const char *str, int c);
 
+// EXECUTOR/PIPE.C
+int			run_pipeline(t_command *cmds, char ***env);	
+
+//  EXECUTOR/PIPE2.C
+void		child_dup2(int oldfd, int newfd, t_command *cmd, t_pipe_info *info);
+
+//  EXECUTOR/PIPE3.C
+void close_all_pipes(int *pipes, int count);
 #endif

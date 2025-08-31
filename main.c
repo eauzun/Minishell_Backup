@@ -7,8 +7,8 @@ int	run_command_line(t_command *cmds, char ***env)
 		g_exit_code(0);
 		return (0);
 	}
-	//if (cmds->next)
-	//	return (run_pipeline(cmds, env));
+	if (cmds->next)
+		return (run_pipeline(cmds, env));
 	return (execute_single_command(cmds, env));
 }
 
