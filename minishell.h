@@ -201,46 +201,18 @@ int			builtin_pwd(void);
 //  BUILTIN/UNSET.C
 int			builtin_unset(char **args, char ***env);
 
-// EXECUTOR/EXECUTOR.C
-int			execute_single_command(t_command *cmd, char ***env);
-int			run_external_command(t_command *cmd, char ***env);
-
-// EXECUTOR/EXECUTOR_REDIR.C
-int			apply_redirs(t_command *cmd, char ***env);
-
-// EXECUTOR/EXECUTOR_BUILTIN.C
-int			is_builtin_command(t_command *cmd);
-int			exec_builtin_parent(t_command *cmd, char ***env);
-int			exec_builtin(t_command *cmd, char ***env);
-int			exec_builtin_or_parent(t_command *cmd, char ***env);
-
-// EXECUTOR/EXECUTOR_UTILS.C
-char		**ft_split(const char *s, char c);
-void		free_str_array(char **arr);
-
-// EXECUTOR/EXECUTOR_PATH.C
-char		*find_in_path(char *cmd, char **env);
-int			command_not_found(char *cmd);
-void		execve_command(char *path, t_command *cmd, char **env);
-
+int	execute_single_command(t_command *cmd, char ***env);
+int	run_external_command(t_command *cmd, char ***env);
+int	exec_builtin_or_parent(t_command *cmd, char ***env);
+int	apply_redirs(t_command *cmd, char ***env);
+char    *find_in_path(char *cmd, char **env);
+int     is_builtin_command(t_command *cmd);
+int	run_pipeline(t_command *cmds, char ***env);
 //	UTILS/UTILS3.C
 size_t		ft_strcpy(char *dst, const char *src);
 size_t		ft_strncpy(char *dst, const char *src, size_t n);
 char		*ft_strrchr(const char *str, int c);
 
-// EXECUTOR/PIPE.C
-int			run_pipeline(t_command *cmds, char ***env);	
-
-//  EXECUTOR/PIPE2.C
-void		child_dup2(int oldfd, int newfd, t_command *cmd, t_pipe_info *info);
-void		child_run(t_command *cmd, t_pipe_info *info);
-
-//  EXECUTOR/PIPE3.C
-void		close_all_pipes(int *pipes, int count);
-int			cmd_count(t_command *cmds);
-int			*setup_pipes(int count);
-void		cleanup_child(t_command *cmd, t_pipe_info *info);
-#endif
 
 // UTILS/EXECUTION_LOOP.C
 void	cleanup_tokens_and_commands(t_token *tokens, t_command *commands);
@@ -249,3 +221,4 @@ t_token	*process_expander(t_token *tokens, char **env);
 t_token	*process_quote_removal(t_token *tokens);
 t_command	*process_parser(t_token *tokens);
 
+#endif
