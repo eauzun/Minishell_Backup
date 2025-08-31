@@ -36,7 +36,7 @@ t_token	*expand_tokens(t_token *tokens, char **env)
 			cur->str = new_str;
 		}
 		else if (cur->type <= T_WORD_DOUBLE)
-			return (free_token(tokens), NULL);
+			return (NULL);
 		cur = cur->next;
 	}
 	return (tokens);

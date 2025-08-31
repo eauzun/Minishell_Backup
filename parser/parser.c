@@ -42,10 +42,7 @@ static int handle_word(t_token **cur, t_command *cmd)
 {
     char *merged = gather_word(cur);
     if (!merged)
-	{
-		free_commands(cmd);
         return (0);
-	}
     add_argument(cmd, merged);
     free(merged);
     return (1);

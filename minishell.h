@@ -160,27 +160,12 @@ void		syntax_error(const char *msg);
 int			count_args(char **args);
 void		add_argument(t_command *cmd, char *arg);
 void		add_redir(t_command *cmd, t_redir_type type, char *file);
-//  EXECUTOR/EXECUTOR.C (YENİ)
-int			execute_single_command(t_command *cmd, char ***env);
-int			run_external_command(t_command *cmd, char ***env);
-void		execve_command(char *path, t_command *cmd, char **env);
-int			command_not_found(char *cmd);
-void		restore_stdio(int in_fd, int out_fd);
-//  EXECUTOR/EXECUTOR_BUILTIN.C (YENİ)
-int			is_builtin_command(t_command *cmd);
-int			exec_builtin_parent(t_command *cmd, char ***env);
-int			exec_builtin(t_command *cmd, char ***env);
-int			exec_builtin_or_parent(t_command *cmd, char ***env);
-//  EXECUTOR/EXECUTOR_REDIR.C (YENİ)
-int			apply_redirs(t_command *cmd, char ***env);
-//  EXECUTOR/EXECUTOR_UTILS.C (YENİ)
-char		**ft_split(const char *s, char c);
-void		free_str_array(char **arr);
-//  EXECUTOR/EXECUTOR_UTILS2.C
-char		*find_in_path(char *cmd, char **env);
+
 
 //  BUILTIN/CD.C
 int			builtin_cd(char **args, char ***env);
+void    ft_putstr_fd(char *s, int fd);
+
 //  BUILTIN/CD_UTILS.C
 char		*get_home_path(char **env);
 char		*get_oldpwd_path(char **env);
@@ -204,7 +189,6 @@ int			find_env_var(char **env, char *name);
 int			update_env_var(char ***env, int pos, char *name, char *value);
 char		*create_env_string(char *name, char *value);
 int			get_env_size(char **env);
-void	ft_putstr_fd(char *s, int fd);
 //  BUILTIN/EXPORT_UTILS2.C
 void		free_env_array(char **env);
 char		**copy_env_array(char **env);
@@ -217,14 +201,12 @@ int			builtin_pwd(void);
 //  BUILTIN/UNSET.C
 int			builtin_unset(char **args, char ***env);
 
-// SRC/CLEANUP2.C
-void		cleanup_on_parse_error(t_token *tokens, t_command *partial_cmd);
-void		cleanup_on_expand_error(t_token *tokens);
-void		cleanup_and_return(t_token *tokens, t_command *commands);
+int	execute_single_command(t_command *cmd, char ***env);
+int	run_external_command(t_command *cmd, char ***env);
 
-// SRC/CLEANUP.C
-void		child_clean_exit(int status);
-void		child_clean_exit_env(int status, char **env);
-void		child_pre_exec_sanitize(void);
-void		child_clean_exit_env_cmds(int status, char **env, t_command *head);
+
+
+
+
+
 #endif
