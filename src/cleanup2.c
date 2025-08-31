@@ -14,7 +14,7 @@ void cleanup_on_expand_error(t_token *tokens)
         free_token(tokens);
 }
 
-static void cleanup_and_return(t_token *tokens, t_command *commands)
+void cleanup_and_return(t_token *tokens, t_command *commands)
 {
     if (commands)
         free_commands(commands);
