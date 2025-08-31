@@ -1,6 +1,6 @@
 NAME    = minishell
 CC      = gcc
-CFLAGS  =# -Wall -Wextra -Werror
+CFLAGS  = -g # -Wall -Wextra -Werror
 RM      = rm -f
 
 # OS'ye göre readline ayarları
