@@ -222,4 +222,9 @@ char		*find_in_path(char *cmd, char **env);
 int			command_not_found(char *cmd);
 void		execve_command(char *path, t_command *cmd, char **env);
 
+//	UTILS/UTILS3.C
+size_t		ft_strcpy(char *dst, const char *src);
+size_t		ft_strncpy(char *dst, const char *src, size_t n);
+char		*ft_strrchr(const char *str, int c);
+
 #endif
