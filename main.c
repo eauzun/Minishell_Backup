@@ -73,7 +73,7 @@ int	main(int ac, char **av, char **env)
 {
 	char	**env_cpy;
 	int		status;
-
+	
 	if (ac != 1 || av[1] != NULL)
 	{
 		write(2, "minishell: no arguments allowed!\n", 33);

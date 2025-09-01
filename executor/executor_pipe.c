@@ -211,20 +211,29 @@ static int	preprocess_pipeline_heredocs(t_command *cmds, char **env)
 	int			backup_stdin;
 
 	cur = cmds;
-	backup_stdin = dup(STDIN_FILENO); // backup terminal stdin
+	backup_stdin = dup(STDIN_FILENO); 
+	
 	while (cur)
 	{
 		if (cur->heredocs)
 		{
 			status = process_heredocs(cur, env);
-			if (status)
+			if (status == 130) 
 			{
+				dup2(backup_stdin, STDIN_FILENO);
+				close(backup_stdin);
+				return (130);
+			}
+			else if (status != 0)
+			{
+				dup2(backup_stdin, STDIN_FILENO);
 				close(backup_stdin);
 				return (status);
 			}
 		}
 		cur = cur->next;
 	}
+	
 	close(backup_stdin);
 	return (0);
 }
@@ -235,7 +244,7 @@ int	run_pipeline(t_command *cmds, char ***env, t_token *tokens)
 	int			status;
 	int			heredoc_status;
 
-	//burayı ekledim. önce tüm heredoc'ları process ediyoruz
+
 	heredoc_status = preprocess_pipeline_heredocs(cmds, *env);
 	if (heredoc_status)
 		return (heredoc_status);
