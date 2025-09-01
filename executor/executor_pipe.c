@@ -199,31 +199,73 @@ static int	wait_all_children(pid_t *pids, int count)
 	return (exit_code);
 }
 
+static int	preprocess_pipeline_heredocs(t_command *cmds, char **env)
+{
+	t_command	*cur;
+	int			status;
+
+	cur = cmds;
+	while (cur)
+	{
+		if (cur->heredocs)
+		{
+			status = process_heredocs(cur, env);
+			if (status)
+				return (status);
+		}
+		cur = cur->next;
+	}
+	return (0);
+}
+
+static int	handle_pipeline_heredocs(t_command *cmds, char ***env)
+{
+	int	heredoc_status;
+
+	heredoc_status = preprocess_pipeline_heredocs(cmds, *env);
+	if (heredoc_status)
+		return (heredoc_status);
+	return (0);
+}
+
+static int	init_pipe_info(t_pipe_info *info, t_command *cmds)
+{
+	info->n = cmd_count(cmds);
+	info->pipes = setup_pipes(info->n - 1);
+	if (!info->pipes && info->n > 1)
+		return (1);
+	info->pids = malloc(sizeof(pid_t) * info->n);
+	if (!info->pids)
+	{
+		free(info->pipes);
+		return (1);
+	}
+	return (0);
+}
+
+static void	cleanup_pipe_info(t_pipe_info *info)
+{
+	free(info->pipes);
+	free(info->pids);
+}
+
 int	run_pipeline(t_command *cmds, char ***env, t_token *tokens)
 {
 	t_pipe_info	info;
 	int			status;
 
-	info.n = cmd_count(cmds);
-	info.pipes = setup_pipes(info.n - 1);
-	if (!info.pipes && info.n > 1)
+	if (handle_pipeline_heredocs(cmds, env))
 		return (1);
-	info.pids = malloc(sizeof(pid_t) * info.n);
-	if (!info.pids)
-	{
-		free(info.pipes);
+	if (init_pipe_info(&info, cmds))
 		return (1);
-	}
 	info.env = env;
 	if (work_child_work(cmds, &info, tokens))
 	{
-		free(info.pipes);
-		free(info.pids);
+		cleanup_pipe_info(&info);
 		return (1);
 	}
 	close_all_pipes(info.pipes, info.n - 1);
 	status = wait_all_children(info.pids, info.n);
-	free(info.pipes);
-	free(info.pids);
+	cleanup_pipe_info(&info);
 	return (status);
 }

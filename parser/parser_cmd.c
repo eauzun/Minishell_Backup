@@ -22,6 +22,7 @@ t_command	*create_command(void)
 	cmd->heredoc_prev = NULL;
 	cmd->redir_error = 0;
 	cmd->redirs = NULL;
+	cmd->heredocs = NULL;
 	cmd->next = NULL;
 	return (cmd);
 }
@@ -40,34 +41,53 @@ void free_redirs(t_redir *redir)
     }
 }
 
+#include "../minishell.h"
+
+static void	free_args(char **args)
+{
+	int	i;
+
+	if (!args)
+		return ;
+	i = 0;
+	while (args[i])
+		free(args[i++]);
+	free(args);
+}
+
+static void	free_cmd_fields(t_command *cmd)
+{
+	if (cmd->redirs)
+	{
+		free_redirs(cmd->redirs);
+		cmd->redirs = NULL;
+	}
+	if (cmd->heredocs)
+	{
+		free_heredocs(cmd->heredocs);
+		cmd->heredocs = NULL;
+	}
+	if (cmd->args)
+	{
+		free_args(cmd->args);
+		cmd->args = NULL;
+	}
+	if (cmd->infile)
+		free(cmd->infile);
+	if (cmd->outfile)
+		free(cmd->outfile);
+	if (cmd->heredoc_prev)
+		free(cmd->heredoc_prev);
+}
 
 void	free_commands(t_command *cmd)
 {
 	t_command	*tmp;
-	int			i;
 
 	while (cmd)
 	{
 		tmp = cmd->next;
-		if (cmd->redirs)
-		{
-			free_redirs(cmd->redirs);
-			cmd->redirs = NULL;
-		}
-		if (cmd->args)
-		{
-			i = 0;
-			while (cmd->args[i])
-				free(cmd->args[i++]);
-			free(cmd->args);
-			cmd->args = NULL;
-		}
-		if (cmd->infile)
-			free(cmd->infile);
-		if (cmd->outfile)
-			free(cmd->outfile);
-		if (cmd->heredoc_prev)
-			free(cmd->heredoc_prev);
+		free_cmd_fields(cmd);
 		free(cmd);
 		cmd = tmp;
 	}

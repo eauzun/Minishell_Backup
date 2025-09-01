@@ -1,0 +1,67 @@
+#include"../minishell.h"
+
+t_heredoc create_heredoc(char *delimiter, int expand_vars)
+{
+    t_heredoc heredoc;
+
+    heredoc=malloc(sizeof(t_heredoc));
+    if (!heredoc)
+        return (NULL);
+    heredoc->delimiter = ft_strdup(delimiter);
+    if(!heredoc->delimiter)
+    {
+        free(heredoc);
+        return (NULL);
+    }
+    heredoc->pipe_fd[0] = -1;
+    heredoc->pipe_fd[1] = -1;
+    heredoc->expand_vars = expand_vars;
+    heredoc->next = NULL;
+    return (heredoc);
+}
+void free_heredoc(t_heredoc *heredocs)
+{
+    t_heredoc *tmp;
+
+    while(heredocs)
+    {
+        tmp = heredocs->next;
+        if(heredocs->delimiter)
+            free(heredocs->delimiter);
+        if(heredocs->pipe_fd[0] != -1)
+            close(heredocs->pipe_fd[0]);
+        if(heredocs->pipe_fd[1] != -1)
+            close(heredocs->pipe_fd[1]);
+        free(heredocs);
+        heredocs = tmp;
+    }
+}
+
+void add_heredoc(t_command *cmd, char *delimiter, int expand_vars)
+{
+    t_heredoc *new_heredoc;
+    t_heredoc *cur;
+
+    new_heredoc = create_heredoc(delimiter, expand_vars);
+    if (!new_heredoc)
+        return ;
+    if (!cmd->heredocs)
+        cmd->heredocs = new_heredoc;
+    else
+    {
+        cur = cmd->heredocs;
+        while(cur->next)
+            cur = cur->next;
+        cur->next = new_heredoc;
+    }
+}
+
+void cleanup_heredoc_interrupt(t_command *cmd)
+{
+    if(cmd && cmd->heredocs)
+    {
+        free_heredoc(cmd->heredocs);
+        cmd->heredocs = NULL;
+    }
+}
+    

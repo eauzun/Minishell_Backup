@@ -98,6 +98,36 @@ int	exec_builtin_or_parent(t_command *cmd, char ***env)
 	return (status);
 }
 
+static int	save_fds(int *save_in, int *save_out)
+{
+	*save_in = dup(STDIN_FILENO);
+	*save_out = dup(STDOUT_FILENO);
+	if (*save_in == -1 || *save_out == -1)
+		return (1);
+	return (0);
+}
+
+static void	restore_fds(int save_in, int save_out)
+{
+	dup2(save_in, STDIN_FILENO);
+	dup2(save_out, STDOUT_FILENO);
+	close(save_in);
+	close(save_out);
+}
+
+static int	handle_heredocs(t_command *cmd, char ***env)
+{
+	int	heredoc_status;
+
+	if (cmd->heredocs)
+	{
+		heredoc_status = process_heredocs(cmd, *env);
+		if (heredoc_status)
+			return (heredoc_status);
+	}
+	return (0);
+}
+
 int	execute_single_command(t_command *cmd, char ***env)
 {
 	int	status;
@@ -107,22 +137,20 @@ int	execute_single_command(t_command *cmd, char ***env)
 	status = 0;
 	if (!cmd || !cmd->args || !cmd->args[0])
 		return (0);
-	save_in = dup(STDIN_FILENO);
-	save_out = dup(STDOUT_FILENO);
+	if (handle_heredocs(cmd, env))
+		return (1);
+	if (save_fds(&save_in, &save_out))
+		return (1);
 	if (apply_redirs(cmd, env) != 0)
 	{
-		close(save_in);
-		close(save_out);
+		restore_fds(save_in, save_out);
 		return (1);
 	}
 	if (is_builtin_command(cmd))
 		status = exec_builtin_or_parent(cmd, env);
 	else
 		status = run_external_command(cmd, env);
-	dup2(save_in, STDIN_FILENO);
-	dup2(save_out, STDOUT_FILENO);
-	close(save_in);
-	close(save_out);
+	restore_fds(save_in, save_out);
 	g_exit_code(status);
 	return (status);
 }

@@ -50,6 +50,15 @@ typedef struct s_redir
 	struct s_redir	*next;
 }	t_redir;
 
+typedef struct s_heredoc
+{
+	char			*delimiter;
+	int				expand_vars;
+	int				pipe_fd[2];     
+	struct s_heredoc	*next;
+}	t_heredoc;
+
+
 typedef struct s_command
 {
 	int					redir_error;
@@ -61,6 +70,7 @@ typedef struct s_command
 	char				*outfile;
 	char				*heredoc_prev;
 	t_redir				*redirs;
+	t_heredoc			*heredocs;
 	struct s_command	*next;
 }	t_command;
 
@@ -220,5 +230,13 @@ t_token	*process_lexer(const char *line);
 t_token	*process_expander(t_token *tokens, char **env);
 t_token	*process_quote_removal(t_token *tokens);
 t_command	*process_parser(t_token *tokens);
+
+int		process_heredocs(t_command *cmd, char **env);
+int		process_single_heredoc(t_heredoc *heredoc, char **env);
+t_heredoc	*create_heredoc(char *delimiter, int expand_vars);
+void	free_heredocs(t_heredoc *heredocs);
+void	add_heredoc(t_command *cmd, char *delimiter, int expand_vars);
+void	cleanup_heredoc_interrupt(t_command *cmd);
+void	heredoc_signal_handler(int sig);
 
 #endif
