@@ -73,7 +73,7 @@ typedef struct s_pipe_info
 }	t_pipe_info;
 
 // MAIN.C
-int			run_command_line(t_command *cmds, char ***env);
+int			run_command_line(t_command *cmds, char ***env, t_token *tokens);
 void		execute_line(const char *line, char ***env, int *exit_status);
 int			minishell(char ***env);
 //  SRC/ENV_DATA.C
@@ -207,7 +207,7 @@ int	exec_builtin_or_parent(t_command *cmd, char ***env);
 int	apply_redirs(t_command *cmd, char ***env);
 char    *find_in_path(char *cmd, char **env);
 int     is_builtin_command(t_command *cmd);
-int	run_pipeline(t_command *cmds, char ***env);
+int	run_pipeline(t_command *cmds, char ***env, t_token *tokens);
 //	UTILS/UTILS3.C
 size_t		ft_strcpy(char *dst, const char *src);
 size_t		ft_strncpy(char *dst, const char *src, size_t n);

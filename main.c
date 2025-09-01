@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-int	run_command_line(t_command *cmds, char ***env)
+int	run_command_line(t_command *cmds, char ***env, t_token *tokens)
 {
 	if (!cmds)
 	{
@@ -8,7 +8,7 @@ int	run_command_line(t_command *cmds, char ***env)
 		return (0);
 	}
 	if (cmds->next)
-		return (run_pipeline(cmds, env));
+		return (run_pipeline(cmds, env, tokens));
 	return (execute_single_command(cmds, env));
 }
 
@@ -31,7 +31,7 @@ void	execute_line(const char *line, char ***env, int *exit_status)
 		commands = parse_tokens(tokens);
 	if (commands)
 	{
-		status = run_command_line(commands, env);
+		status = run_command_line(commands, env, tokens);
 		*exit_status = status;
 		g_exit_code(status);
 	}

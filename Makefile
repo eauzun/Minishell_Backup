@@ -46,7 +46,7 @@ fclean: clean
 re: fclean all
 
 LEAKFLAGS=--leak-check=full \
-          --show-leak-kinds=definite,indirect \
+          --show-leak-kinds=all \
           --track-origins=yes --track-fds=yes \
           --suppressions=readline.supp \
           --trace-children=no \

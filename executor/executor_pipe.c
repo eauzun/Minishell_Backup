@@ -42,27 +42,34 @@ static int	*setup_pipes(int count)
 	return (pipes);
 }
 
-static void	cleanup_child(t_command *cmd, t_pipe_info *info)
+static void	cleanup_child_extended(t_command *cmd, t_token *tokens,
+									t_pipe_info *info, int exit_code)
 {
-	int	i;
-
-	i = 0;
 	if (info->pipes)
 		free(info->pipes);
 	if (info->pids)
 		free(info->pids);
-	if (cmd && cmd->args)
+
+	// Commands cleanup
+	if (cmd)
+		free_commands(cmd); // args + redirs + infile/outfile + command yapısı
+
+	// Tokens cleanup
+	if (tokens)
+		free_token(tokens); // lexer malloclarını temizler
+
+	// Env cleanup (sadece child kopyası varsa)
+	if (info->env && *(info->env))
 	{
-		i = 0;
-		while (cmd->args[i])
-		{
-			free(cmd->args[i]);
-			i++;
-		}
-		free(cmd->args);
-		cmd->args = NULL;
+		free_env_data(*(info->env));
+		*(info->env) = NULL;
 	}
+
+	rl_clear_history();
+	exit(exit_code);
 }
+
+
 
 static void	close_all_pipes(int *pipes, int count)
 {
@@ -73,19 +80,29 @@ static void	close_all_pipes(int *pipes, int count)
 	i = 0;
 	while (i < count)
 	{
-		close(pipes[i * 2]); // read
-		close(pipes[i * 2 + 1]); // write
+		close(pipes[i * 2]);
+		close(pipes[i * 2 + 1]); 
 		i++;
 	}
 }
-
-static void	child_run_builtin(t_command *cmd, t_pipe_info *info)
+static int	child_builtin_exec(t_command *cmd, char ***env)
+{
+	if (!cmd || !cmd->args || !cmd->args[0])
+		return (0);
+	if (ft_strcmp(cmd->args[0], "echo") == 0)
+		return (builtin_echo(cmd->args));
+	if (ft_strcmp(cmd->args[0], "pwd") == 0)
+		return (builtin_pwd());
+	if (ft_strcmp(cmd->args[0], "env") == 0)
+		return (builtin_env(*env));
+	return (0);
+}
+static void	child_run_builtin(t_command *cmd, t_pipe_info *info, t_token *tokens)
 {
 	int	status;
 
-	status = exec_builtin_or_parent(cmd, info->env);
-	cleanup_child(cmd, info);
-	exit(status);
+	status = child_builtin_exec(cmd, info->env);
+	cleanup_child_extended(cmd, tokens, info, status);
 }
 
 static void	child_run_external(t_command *cmd, t_pipe_info *info)
@@ -98,24 +115,20 @@ static void	child_run_external(t_command *cmd, t_pipe_info *info)
 		ft_putstr_fd("minishell: command not found: ", STDERR_FILENO);
 		ft_putstr_fd(cmd->args[0], STDERR_FILENO);
 		ft_putstr_fd("\n", STDERR_FILENO);
-		cleanup_child(cmd, info);
-		exit(127);
+		cleanup_child_extended(cmd, NULL, info, 127);
 	}
 	execve(path, cmd->args, *(info->env));
 	perror("execve");
 	free(path);
-	cleanup_child(cmd, info);
-	exit(126);
+	cleanup_child_extended(cmd, NULL, info, 126);
 }
-static void	child_run(t_command *cmd, t_pipe_info *info)
+
+static void	child_run(t_command *cmd, t_pipe_info *info, t_token *tokens)
 {
 	if (apply_redirs(cmd, info->env) != 0)
-	{
-		cleanup_child(cmd, info);
-		exit(1);
-	}
+		cleanup_child_extended(cmd, NULL, info, 1);
 	if (is_builtin_command(cmd))
-		child_run_builtin(cmd, info);
+		child_run_builtin(cmd, info, tokens);
 	else
 		child_run_external(cmd, info);
 }
@@ -125,28 +138,27 @@ static void	child_dup2(int oldfd, int newfd, t_command *cmd, t_pipe_info *info)
 	if (dup2(oldfd, newfd) == -1)
 	{
 		perror("dup2");
-		cleanup_child(cmd, info);
-		exit(1);
+		cleanup_child_extended(cmd, NULL, info, 1);
 	}
 }
 
-static void	child_process(t_command *cmd, int index, t_pipe_info *info)
+static void	child_process(t_command *cmd, int index, t_pipe_info *info, t_token *tokens)
 {
 	set_child_signals();
-	if (index == 0 && info->n > 1) // ilk komut
+	if (index == 0 && info->n > 1) 
 		child_dup2(info->pipes[1], STDOUT_FILENO, cmd, info);
-	else if (index == info->n - 1 && info->n > 1) // son komut
+	else if (index == info->n - 1 && info->n > 1) 
 		child_dup2(info->pipes[(index - 1) * 2], STDIN_FILENO, cmd, info);
-	else if (index > 0 && index < info->n - 1) // ara komutlar
+	else if (index > 0 && index < info->n - 1) 
 	{
 		child_dup2(info->pipes[(index - 1) * 2], STDIN_FILENO, cmd, info);
 		child_dup2(info->pipes[index * 2 + 1], STDOUT_FILENO, cmd, info);
 	}
 	close_all_pipes(info->pipes, info->n - 1);
-	child_run(cmd, info);
+	child_run(cmd, info, tokens);
 }
 
-static int	work_child_work(t_command *cmds, t_pipe_info *info)
+static int	work_child_work(t_command *cmds, t_pipe_info *info, t_token *tokens)
 {
 	t_command	*cur;
 	int			i;
@@ -158,8 +170,8 @@ static int	work_child_work(t_command *cmds, t_pipe_info *info)
 		info->pids[i] = fork();
 		if (info->pids[i] == -1)
 			return (1);
-		if (info->pids[i] == 0) // çocuğa görev atanıyor
-			child_process(cur, i, info); // tek kritik nokta → child_process içinde başarısızlık durumunda mutlaka exit(1) çağırman gerekiyor.
+		if (info->pids[i] == 0) 
+			child_process(cur, i, info, tokens); 
 		cur = cur->next;
 		i++;
 	}
@@ -187,7 +199,7 @@ static int	wait_all_children(pid_t *pids, int count)
 	return (exit_code);
 }
 
-int	run_pipeline(t_command *cmds, char ***env)
+int	run_pipeline(t_command *cmds, char ***env, t_token *tokens)
 {
 	t_pipe_info	info;
 	int			status;
@@ -203,7 +215,7 @@ int	run_pipeline(t_command *cmds, char ***env)
 		return (1);
 	}
 	info.env = env;
-	if (work_child_work(cmds, &info))
+	if (work_child_work(cmds, &info, tokens))
 	{
 		free(info.pipes);
 		free(info.pids);

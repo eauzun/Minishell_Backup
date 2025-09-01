@@ -26,18 +26,20 @@ t_command	*create_command(void)
 	return (cmd);
 }
 
-void	free_redirs(t_redir *redir)
+void free_redirs(t_redir *redir)
 {
-	t_redir	*next_redir;
+    t_redir *next;
 
-	while (redir)
-	{
-		next_redir = redir->next;
-		free(redir->file);
-		free(redir);
-		redir = next_redir;
-	}
+    while (redir)
+    {
+        next = redir->next;
+        if (redir->file)
+            free(redir->file);
+        free(redir);
+        redir = next;
+    }
 }
+
 
 void	free_commands(t_command *cmd)
 {
@@ -48,13 +50,17 @@ void	free_commands(t_command *cmd)
 	{
 		tmp = cmd->next;
 		if (cmd->redirs)
+		{
 			free_redirs(cmd->redirs);
+			cmd->redirs = NULL;
+		}
 		if (cmd->args)
 		{
 			i = 0;
 			while (cmd->args[i])
 				free(cmd->args[i++]);
 			free(cmd->args);
+			cmd->args = NULL;
 		}
 		if (cmd->infile)
 			free(cmd->infile);
@@ -66,6 +72,7 @@ void	free_commands(t_command *cmd)
 		cmd = tmp;
 	}
 }
+
 
 void	link_commands(t_command **head, t_command *new_cmd)
 {
