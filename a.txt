@@ -1,7 +1,0 @@
-hello
-world
-helloworld
-a
-a
-a
-a

@@ -15,12 +15,31 @@ static int	apply_single_redir(t_redir *cur, t_command *cmd)
 	{
 		perror(cur->file);
 		cmd->redir_error = 1;
+		g_exit_code(1);
 		return (1);
 	}
 	if (cur->type == R_IN)
-		dup2(fd, STDIN_FILENO);
+	{
+		if (dup2(fd, STDIN_FILENO) == -1)
+		{
+			perror("dup2");
+			close(fd);
+			cmd->redir_error = 1;
+			g_exit_code(1);
+			return (1);
+		}
+	}
 	else // R_OUT or R_APPEND
-		dup2(fd, STDOUT_FILENO);
+	{
+		if (dup2(fd, STDOUT_FILENO) == -1)
+		{
+			perror("dup2");
+			close(fd);
+			cmd->redir_error = 1;
+			g_exit_code(1);
+			return (1);
+		}
+	}
 	close(fd);
 	return (0);
 }
@@ -98,59 +117,50 @@ int	exec_builtin_or_parent(t_command *cmd, char ***env)
 	return (status);
 }
 
-static int	save_fds(int *save_in, int *save_out)
-{
-	*save_in = dup(STDIN_FILENO);
-	*save_out = dup(STDOUT_FILENO);
-	if (*save_in == -1 || *save_out == -1)
-		return (1);
-	return (0);
-}
-
-static void	restore_fds(int save_in, int save_out)
-{
-	dup2(save_in, STDIN_FILENO);
-	dup2(save_out, STDOUT_FILENO);
-	close(save_in);
-	close(save_out);
-}
-
-static int	handle_heredocs(t_command *cmd, char ***env)
-{
-	int	heredoc_status;
-
-	if (cmd->heredocs)
-	{
-		heredoc_status = process_heredocs(cmd, *env);
-		if (heredoc_status)
-			return (heredoc_status);
-	}
-	return (0);
-}
-
 int	execute_single_command(t_command *cmd, char ***env)
 {
 	int	status;
 	int	save_in;
 	int	save_out;
+	int	heredoc_status;
+	int	backup_stdin;
 
 	status = 0;
 	if (!cmd || !cmd->args || !cmd->args[0])
 		return (0);
-	if (handle_heredocs(cmd, env))
-		return (1);
-	if (save_fds(&save_in, &save_out))
-		return (1);
-	if (apply_redirs(cmd, env) != 0)
+	backup_stdin = dup(STDIN_FILENO); // terminal backup
+	if (cmd->heredocs)
 	{
-		restore_fds(save_in, save_out);
-		return (1);
+		heredoc_status = process_heredocs(cmd, *env);
+		if (heredoc_status) // Ctrl-C veya hata
+		{
+			dup2(backup_stdin, STDIN_FILENO);
+			close(backup_stdin);
+			return (heredoc_status); // 130 veya 1 döner
+		}
+	}
+	save_in = dup(STDIN_FILENO);
+	save_out = dup(STDOUT_FILENO);
+	if (apply_redirs(cmd, env) != 0 || cmd->redir_error)
+	{
+		dup2(save_in, STDIN_FILENO);
+		dup2(save_out, STDOUT_FILENO);
+		close(save_in);
+		close(save_out);
+		close(backup_stdin);
+		return (g_exit_code(1));
 	}
 	if (is_builtin_command(cmd))
 		status = exec_builtin_or_parent(cmd, env);
 	else
 		status = run_external_command(cmd, env);
-	restore_fds(save_in, save_out);
+	dup2(save_in, STDIN_FILENO);
+	dup2(save_out, STDOUT_FILENO);
+	close(save_in);
+	close(save_out);
+	// heredoc sonrası stdin'i terminale geri ver
+	dup2(backup_stdin, STDIN_FILENO);
+	close(backup_stdin);
 	g_exit_code(status);
 	return (status);
 }
@@ -291,6 +301,12 @@ static int	command_not_found(char *cmd)
 static void	execve_command(char *path, t_command *cmd, char **env)
 {
 	execve(path, cmd->args, env);
+	if (cmd->args[0] && (cmd->args[0][0] == '/' ||
+        (cmd->args[0][0] == '.' && cmd->args[0][1] == '/')))
+    {
+        free(path);
+        exit(0);
+    }
 	perror("execve");
 	exit(126);
 }

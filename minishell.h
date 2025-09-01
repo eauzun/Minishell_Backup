@@ -53,11 +53,10 @@ typedef struct s_redir
 typedef struct s_heredoc
 {
 	char			*delimiter;
-	int				expand_vars;
-	int				pipe_fd[2];     
+	int				expand_vars;    // 0 if quoted delimiter
+	int				pipe_fd[2];     // pipe for content
 	struct s_heredoc	*next;
 }	t_heredoc;
-
 
 typedef struct s_command
 {
@@ -70,7 +69,7 @@ typedef struct s_command
 	char				*outfile;
 	char				*heredoc_prev;
 	t_redir				*redirs;
-	t_heredoc			*heredocs;
+	t_heredoc			*heredocs; // YENİ
 	struct s_command	*next;
 }	t_command;
 
@@ -223,15 +222,7 @@ size_t		ft_strcpy(char *dst, const char *src);
 size_t		ft_strncpy(char *dst, const char *src, size_t n);
 char		*ft_strrchr(const char *str, int c);
 
-
-// UTILS/EXECUTION_LOOP.C
-void	cleanup_tokens_and_commands(t_token *tokens, t_command *commands);
-t_token	*process_lexer(const char *line);
-t_token	*process_expander(t_token *tokens, char **env);
-t_token	*process_quote_removal(t_token *tokens);
-t_command	*process_parser(t_token *tokens);
-
-int		process_heredocs(t_command *cmd, char **env);
+int process_heredocs(t_command *cmd, char **env);
 int		process_single_heredoc(t_heredoc *heredoc, char **env);
 t_heredoc	*create_heredoc(char *delimiter, int expand_vars);
 void	free_heredocs(t_heredoc *heredocs);

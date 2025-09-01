@@ -33,7 +33,7 @@ void	apply_heredoc(t_command *cmd, char *name, int quoted_first_part)
 	add_heredoc(cmd, name, !quoted_first_part);
 	cmd->heredoc = 1;
 	cmd->heredoc_expand = !quoted_first_part;
-	free(name);
+	free(name); 
 }
 
 void	parse_redirections(t_token **cur, t_command *cmd)
@@ -61,6 +61,5 @@ void	parse_redirections(t_token **cur, t_command *cmd)
 	else if (redir_type == T_REDIR_OUT)
 		add_redir(cmd, R_OUT, name);
 	else if (redir_type == T_APPEND)
-		add_redir(cmd, R_APPEND, name);	
-	free(name);
+		add_redir(cmd, R_APPEND, name);
 }
