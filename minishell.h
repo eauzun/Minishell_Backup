@@ -6,7 +6,7 @@
 /*   By: emuzun <emuzun@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 15:59:17 by hialpagu          #+#    #+#             */
-/*   Updated: 2025/09/02 18:03:54 by emuzun           ###   ########.fr       */
+/*   Updated: 2025/09/02 18:39:05 by emuzun           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -208,5 +208,6 @@ int			ft_isalnum(int c);
 char		*ft_strchr(const char *s, int c);
 char		*ft_strrchr(const char *str, int c);
 int     should_exit_program(void);
-
+long long	ft_atoll(char *str);
+int	is_numeric(char *str);
 #endif

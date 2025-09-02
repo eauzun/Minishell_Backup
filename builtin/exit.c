@@ -1,85 +1,67 @@
-/* Güncellenmiş builtin/exit.c */
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exit.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: emuzun <emuzun@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/02 18:35:00 by pkerfce           #+#    #+#             */
+/*   Updated: 2025/09/02 18:37:36 by emuzun           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
-static int is_numeric(char *str)
-{
-    int i;
 
-    i = 0;
-    if (str[i] == '-' || str[i] == '+')
-        i++;
-    if (!str[i])
-        return (0);
-    while (str[i])
-    {
-        if (str[i] < '0' || str[i] > '9')
-            return (0);
-        i++;
-    }
-    return (1);
+static int	exit_numeric(char *arg)
+{
+	long long	n;
+	int			code;
+
+	n = ft_atoll(arg);
+	code = 256 + (int)((unsigned char)n);
+	return (g_exit_code(code));
 }
 
-static long long ft_atoll(char *str)
+static int	exit_non_numeric(char *arg)
 {
-    long long result;
-    int sign;
-    int i;
-
-    result = 0;
-    sign = 1;
-    i = 0;
-    if (str[i] == '-' || str[i] == '+')
-    {
-        if (str[i] == '-')
-            sign = -1;
-        i++;
-    }
-    while (str[i] >= '0' && str[i] <= '9')
-    {
-        result = result * 10 + (str[i] - '0');
-        i++;
-    }
-    return (result * sign);
+	ft_putstr_fd("minishell: exit: ", 2);
+	ft_putstr_fd(arg, 2);
+	ft_putstr_fd(": numeric argument required\n", 2);
+	return (g_exit_code(258));
 }
 
-static int handle_exit_cases(char **args, int argc)
+static int	exit_too_many(void)
 {
-    long long n;
-    int exit_code;
-
-    if (argc == 1)
-    {
-        exit_code = g_exit_code(-1);
-        if (exit_code == 0)
-            exit_code = 256; /* Special marker: normal exit */
-        else
-            exit_code = 256 + exit_code; /* Keep original exit code */
-        return (g_exit_code(exit_code));
-    }
-    if (!is_numeric(args[1]))
-    {
-        ft_putstr_fd("minishell: exit: ", 2);
-        ft_putstr_fd(args[1], 2);
-        ft_putstr_fd(": numeric argument required\n", 2);
-        return (g_exit_code(258)); /* 256 + 2 */
-    }
-    if (argc > 2)
-    {
-        ft_putstr_fd("minishell: exit: too many arguments\n", 2);
-        return (g_exit_code(257)); /* 256 + 1, but don't exit */
-    }
-    n = ft_atoll(args[1]);
-    exit_code = 256 + (int)((unsigned char)n);
-    return (g_exit_code(exit_code));
+	ft_putstr_fd("minishell: exit: too many arguments\n", 2);
+	return (g_exit_code(257));
 }
 
-int builtin_exit(char **args)
+static int	exit_default(void)
 {
-    int argc;
+	int	code;
 
-    ft_putstr_fd("exit\n", 1);
-    argc = 0;
-    while (args && args[argc])
-        argc++;
-    return (handle_exit_cases(args, argc));
+	code = g_exit_code(-1);
+	if (code == 0)
+		code = 256;
+	else
+		code = 256 + code;
+	return (g_exit_code(code));
+}
+
+int	builtin_exit(char **args)
+{
+	int	argc;
+
+	ft_putstr_fd("exit\n", 1);
+	argc = 0;
+	while (args && args[argc])
+		argc++;
+	if (argc == 1)
+		return (exit_default());
+	if (!is_numeric(args[1]))
+		return (exit_non_numeric(args[1]));
+	if (argc > 2)
+		return (exit_too_many());
+	return (exit_numeric(args[1]));
 }
