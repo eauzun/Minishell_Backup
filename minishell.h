@@ -217,13 +217,13 @@ void		close_all_pipes(int *pipes, int count);
 char    	**ft_split(char const *s, char c);
 
 
-int	read_heredoc_line(char *delimiter, int expand, char **env, int write_fd);
-int process_heredocs(t_command *cmd, char **env);
-int		process_single_heredoc(t_heredoc *heredoc, char **env);
+int			read_heredoc_line(char *delimiter, int expand, char **env, int write_fd);
+int 		process_heredocs(t_command *cmd, char **env);
+int			process_single_heredoc(t_heredoc *heredoc, char **env);
 t_heredoc	*create_heredoc(char *delimiter, int expand_vars);
-void	free_heredocs(t_heredoc *heredocs);
-void	add_heredoc(t_command *cmd, char *delimiter, int expand_vars);
-void	cleanup_heredoc_interrupt(t_command *cmd);
-void	heredoc_signal_handler(int sig);
-void	cleanup_child(t_command *cmd, t_token *tokens, t_pipe_info *info, int exit_code);
+void		free_heredocs(t_heredoc *heredocs);
+void		add_heredoc(t_command *cmd, char *delimiter, int expand_vars);
+void		cleanup_heredoc_interrupt(t_command *cmd);
+void		heredoc_signal_handler(int sig);
+void		cleanup_child(t_command *cmd, t_token *tokens, t_pipe_info *info, int exit_code);
 #endif
