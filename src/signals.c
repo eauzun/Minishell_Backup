@@ -1,48 +1,49 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   signals.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hialpagu <hialpagu@student.42istanbul.c    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/02 18:26:11 by hialpagu          #+#    #+#             */
+/*   Updated: 2025/09/02 18:27:47 by hialpagu         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
-
-int g_exit_code(int code)
+int	should_exit_program(void)
 {
-    static int temp = 0; 
-    
-    if (code != -1)
-        temp = code;
-    return (temp);
+	return (g_exit_code(-1) > 0);
 }
 
-
-int should_exit_program(void)
+void	signal_handler(int signal)
 {
-    return (g_exit_code(-1) > 0);
+	(void)signal;
+	write(1, "\n", 1);
+	rl_replace_line("", 0);
+	rl_on_new_line();
+	rl_redisplay();
+	g_exit_code(130);
 }
 
-void signal_handler(int signal)
+void	set_signals(void)
 {
-    (void)signal;
-    write(1, "\n", 1);
-    rl_replace_line("", 0);
-    rl_on_new_line();
-    rl_redisplay();
-    g_exit_code(130);
+	signal(SIGINT, signal_handler);
+	signal(SIGQUIT, SIG_IGN);
 }
 
-void set_signals(void)
+void	set_child_signals(void)
 {
-    signal(SIGINT, signal_handler);
-    signal(SIGQUIT, SIG_IGN);
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
 }
 
-void set_child_signals(void)
+void	heredoc_signal_handler(int sig)
 {
-    signal(SIGINT, SIG_DFL);
-    signal(SIGQUIT, SIG_DFL);
-}
-
-void heredoc_signal_handler(int sig)
-{
-    (void)sig;
-    write(1, "\n", 1);
-    g_exit_code(130);
-    rl_replace_line("", 0);
-    rl_done = 1;
+	(void)sig;
+	write(1, "\n", 1);
+	g_exit_code(130);
+	rl_replace_line("", 0);
+	rl_done = 1;
 }

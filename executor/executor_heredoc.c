@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   executor_heredoc.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emuzun <emuzun@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: hialpagu <hialpagu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 16:03:14 by emuzun            #+#    #+#             */
-/*   Updated: 2025/09/02 18:07:21 by emuzun           ###   ########.fr       */
+/*   Updated: 2025/09/02 18:28:28 by hialpagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
 
 int	process_single_heredoc(t_heredoc *heredoc, char **env)
 {

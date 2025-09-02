@@ -6,7 +6,7 @@
 /*   By: hialpagu <hialpagu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 15:58:44 by hialpagu          #+#    #+#             */
-/*   Updated: 2025/09/02 15:58:45 by hialpagu         ###   ########.fr       */
+/*   Updated: 2025/09/02 18:52:59 by hialpagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,4 +53,21 @@ void	free_env_data(char **env)
 		i++;
 	}
 	free(env);
+}
+
+int	g_exit_code(int code)
+{
+	static int	temp = 0;
+
+	if (code != -1)
+		temp = code;
+	return (temp);
+}
+
+int	check_should_exit(void)
+{
+	int	code;
+
+	code = g_exit_code(-1);
+	return (code >= 256);
 }

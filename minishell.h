@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emuzun <emuzun@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: hialpagu <hialpagu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 15:59:17 by hialpagu          #+#    #+#             */
-/*   Updated: 2025/09/02 18:39:05 by emuzun           ###   ########.fr       */
+/*   Updated: 2025/09/02 18:52:45 by hialpagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -207,7 +207,9 @@ char		*ft_itoa(int n);
 int			ft_isalnum(int c);
 char		*ft_strchr(const char *s, int c);
 char		*ft_strrchr(const char *str, int c);
-int     should_exit_program(void);
+int			should_exit_program(void);
 long long	ft_atoll(char *str);
-int	is_numeric(char *str);
+int			is_numeric(char *str);
+int			check_should_exit(void);
+
 #endif
