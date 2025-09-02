@@ -1,6 +1,6 @@
 #include "../minishell.h"
 
-char	*join_filename_tokens(t_token **cur, int *was_quoted)
+static char	*join_filename_tokens(t_token **cur, int *was_quoted)
 {
 	t_token	*cur_t;
 	char	*acc;
@@ -20,7 +20,7 @@ char	*join_filename_tokens(t_token **cur, int *was_quoted)
 	return (acc);
 }
 
-int	get_redir_target(t_token **cur, char **out_name, int *was_quoted)
+static int	get_redir_target(t_token **cur, char **out_name, int *was_quoted)
 {
 	*out_name = join_filename_tokens(cur, was_quoted);
 	if (!*out_name)
@@ -28,12 +28,11 @@ int	get_redir_target(t_token **cur, char **out_name, int *was_quoted)
 	return (1);
 }
 
-void	apply_heredoc(t_command *cmd, char *name, int quoted_first_part)
+static void	apply_heredoc(t_command *cmd, char *name, int quoted_first_part)
 {
 	add_heredoc(cmd, name, !quoted_first_part);
 	cmd->heredoc = 1;
-	cmd->heredoc_expand = !quoted_first_part;
-	free(name); 
+	free(name);
 }
 
 void	parse_redirections(t_token **cur, t_command *cmd)

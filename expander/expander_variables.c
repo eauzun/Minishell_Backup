@@ -1,6 +1,6 @@
 #include "../minishell.h"
 
-char	*get_var_name(char *str, size_t *i)
+static char	*get_var_name(char *str, size_t *i)
 {
 	size_t	start;
 	size_t	len;

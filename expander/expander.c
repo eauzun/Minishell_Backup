@@ -10,7 +10,7 @@ char	*join_and_free(char *s1, char *s2)
 	return (result);
 }
 
-char	*get_expanded_str(t_token *token, char **env)
+static char	*get_expanded_str(t_token *token, char **env)
 {
 	if (token->type == T_WORD_SINGLE)
 		return (expand_single_quote(token->str));

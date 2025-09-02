@@ -1,74 +1,97 @@
 #include "../minishell.h"
 
-static int	total(long c)
+char	*ft_strjoin(char const *s1, char const *s2)
+{
+	char	*arr;
+	size_t	i;
+	size_t	j;
+	size_t	len;
+
+	i = 0;
+	len = ft_strlen(s1) + ft_strlen(s2) + 1;
+	arr = malloc(sizeof(char) * len);
+	if (arr == NULL)
+		return (NULL);
+	while (s1[i])
+	{
+		arr[i] = s1[i];
+		i++;
+	}
+	j = i;
+	i = 0;
+	while (s2[i])
+	{
+		arr[j] = s2[i];
+		j++;
+		i++;
+	}
+	arr[j] = '\0';
+	return (arr);
+}
+
+char	*ft_substr(char const *s, unsigned int start, size_t len)
+{
+	char	*str;
+	size_t	i;
+
+	i = 0;
+	if (!s)
+		return (NULL);
+	else if (ft_strlen(s) < start)
+		return (ft_strdup(""));
+	if (len > ft_strlen(s + start))
+		len = ft_strlen(s + start);
+	str = malloc(sizeof(char) * (len + 1));
+	if (str == NULL)
+		return (NULL);
+	while (i < len && start < ft_strlen(s))
+	{
+		str[i] = s[start + i];
+		i++;
+	}
+	str[i] = '\0';
+	return (str);
+}
+
+int	ft_strcmp(const char *s1, const char *s2)
 {
 	int	i;
 
 	i = 0;
-	if (c < 0)
-	{
+	while (s1[i] && s2[i] && s1[i] == s2[i])
 		i++;
-		c *= -1;
-	}
-	if (c == 0)
-		return (1);
-	while (c != 0)
-	{
-		c = c / 10;
-		i++;
-	}
-	return (i);
+	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
 }
 
-char	*ft_itoa(int n)
-{
-	char	*arr;
-	size_t	i;
-	long	num;
-
-	i = total(n);
-	num = (long)n;
-	arr = malloc(sizeof(char) * (total(num) + 1));
-	if (arr == NULL)
-		return (NULL);
-	if (num == 0)
-		arr[0] = '0';
-	arr[i] = '\0';
-	while (num != 0)
-	{
-		if (num < 0)
-		{
-			arr[0] = '-';
-			num = -num;
-		}
-		arr[--i] = (num % 10) + 48;
-		num = num / 10;
-	}
-	return (arr);
-}
-
-int	ft_isalnum(int c)
-{
-	if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
-		|| (c >= '0' && c <= '9'))
-		return (1);
-	return (0);
-}
-
-char	*ft_strchr(const char *s, int c)
+int	ft_strncmp(const char *s1, const char *s2, size_t n)
 {
 	size_t	i;
 
 	i = 0;
-	while (s[i])
+	while (((unsigned char)s1[i] || (unsigned char)s2[i]) && i < n)
 	{
-		if (s[i] == (char)c)
-		{
-			return ((char *)s + i);
-		}
+		if ((unsigned char)s1[i] == (unsigned char)s2[i])
+			i++;
+		else
+			return ((unsigned char)s1[i] - (unsigned char)s2[i]);
+	}
+	return (0);
+}
+
+size_t	ft_strncpy(char *dst, const char *src, size_t n)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < n && src[i] != '\0')
+	{
+		dst[i] = src[i];
 		i++;
 	}
-	if (s[i] == (char)c)
-		return ((char *)s + i);
-	return (NULL);
+	while (i < n)
+	{
+		dst[i] = '\0';
+		i++;
+	}
+	return (n);
 }

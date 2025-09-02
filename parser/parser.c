@@ -1,11 +1,6 @@
 #include "../minishell.h"
 
-int	is_word(t_token *token)
-{
-	return (token && token->type >= T_WORD && token->type <= T_WORD_DOUBLE);
-}
-
-char	*gather_word(t_token **cur)
+static char	*gather_word(t_token **cur)
 {
 	char	*acc;
 	char	*tmp;
@@ -33,47 +28,50 @@ char	*gather_word(t_token **cur)
 	return (acc);
 }
 
-static int handle_redirection(t_token **cur, t_command *cmd)
+static int	handle_redirection(t_token **cur, t_command *cmd)
 {
-    parse_redirections(cur, cmd);
-    return (1);
+	parse_redirections(cur, cmd);
+	return (1);
 }
 
-static int handle_word(t_token **cur, t_command *cmd)
+static int	handle_word(t_token **cur, t_command *cmd)
 {
-    char *merged = gather_word(cur);
-    if (!merged)
-        return (0);
-    add_argument(cmd, merged);
-    free(merged);
-    return (1);
+	char	*merged;
+
+	merged = gather_word(cur);
+	if (!merged)
+		return (0);
+	add_argument(cmd, merged);
+	free(merged);
+	return (1);
 }
 
-t_command *parse_single_command(t_token **tokens)
+static t_command	*parse_single_command(t_token **tokens)
 {
-    t_command *cmd = create_command();
-    t_token   *cur;
+	t_command	*cmd;
+	t_token		*cur;
 
-    if (!cmd)
-        return (NULL);
-    cur = *tokens;
-    while (cur && cur->type != T_PIPE)
-    {
-        if (cur->type >= T_REDIR_IN && cur->type <= T_HEREDOC)
-        {
-            if (!handle_redirection(&cur, cmd))
-                return (free_commands(cmd), NULL);
-        }
-        else if (is_word(cur))
-        {
-            if (!handle_word(&cur, cmd))
-                return (free_commands(cmd), NULL);
-        }
-        else
-            cur = cur->next;
-    }
-    *tokens = cur;
-    return (cmd);
+	cmd = create_command();
+	if (!cmd)
+		return (NULL);
+	cur = *tokens;
+	while (cur && cur->type != T_PIPE)
+	{
+		if (cur->type >= T_REDIR_IN && cur->type <= T_HEREDOC)
+		{
+			if (!handle_redirection(&cur, cmd))
+				return (free_commands(cmd), NULL);
+		}
+		else if (is_word(cur))
+		{
+			if (!handle_word(&cur, cmd))
+				return (free_commands(cmd), NULL);
+		}
+		else
+			cur = cur->next;
+	}
+	*tokens = cur;
+	return (cmd);
 }
 
 t_command	*parse_tokens(t_token *tokens)

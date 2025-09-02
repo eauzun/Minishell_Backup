@@ -1,6 +1,6 @@
 #include "../minishell.h"
 
-void	drop_node(t_token **prev, t_token **cur, t_token **new_head)
+static void	drop_node(t_token **prev, t_token **cur, t_token **new_head)
 {
 	t_token	*next;
 

@@ -42,47 +42,41 @@ static int	*setup_pipes(int count)
 	return (pipes);
 }
 
-static void	cleanup_child_extended(t_command *cmd, t_token *tokens,
-									t_pipe_info *info, int exit_code)
-{
-	if (info->pipes)
-		free(info->pipes);
-	if (info->pids)
-		free(info->pids);
-
-	// Commands cleanup
-	if (cmd)
-		free_commands(cmd); // args + redirs + infile/outfile + command yapısı
-
-	// Tokens cleanup
-	if (tokens)
-		free_token(tokens); // lexer malloclarını temizler
-
-	// Env cleanup (sadece child kopyası varsa)
-	if (info->env && *(info->env))
-	{
-		free_env_data(*(info->env));
-		*(info->env) = NULL;
-	}
-	rl_clear_history();
-	exit(exit_code);
-}
+// static void	cleanup_child(t_command *cmd, t_token *tokens,
+// 									t_pipe_info *info, int exit_code)
+// {
+// 	if (info->pipes)
+// 		free(info->pipes);
+// 	if (info->pids)
+// 		free(info->pids);
+// 	if (cmd)
+// 		free_commands(cmd); 
+// 	if (tokens)
+// 		free_token(tokens); 
+// 	if (info->env && *(info->env))
+// 	{
+// 		free_env_data(*(info->env));
+// 		*(info->env) = NULL;
+// 	}
+// 	rl_clear_history();
+// 	exit(exit_code);
+// }
 
 
-static void	close_all_pipes(int *pipes, int count)
-{
-	int	i;
+// static void	close_all_pipes(int *pipes, int count)
+// {
+// 	int	i;
 
-	if (!pipes || count <= 0)
-		return ;
-	i = 0;
-	while (i < count)
-	{
-		close(pipes[i * 2]);
-		close(pipes[i * 2 + 1]); 
-		i++;
-	}
-}
+// 	if (!pipes || count <= 0)
+// 		return ;
+// 	i = 0;
+// 	while (i < count)
+// 	{
+// 		close(pipes[i * 2]);
+// 		close(pipes[i * 2 + 1]); 
+// 		i++;
+// 	}
+// }
 static int	child_builtin_exec(t_command *cmd, char ***env)
 {
 	if (!cmd || !cmd->args || !cmd->args[0])
@@ -100,7 +94,7 @@ static void	child_run_builtin(t_command *cmd, t_pipe_info *info, t_token *tokens
 	int	status;
 
 	status = child_builtin_exec(cmd, info->env);
-	cleanup_child_extended(cmd, tokens, info, status);
+	cleanup_child(cmd, tokens, info, status);
 }
 
 static void	child_run_external(t_command *cmd, t_pipe_info *info, t_token *tokens)
@@ -113,24 +107,24 @@ static void	child_run_external(t_command *cmd, t_pipe_info *info, t_token *token
 		ft_putstr_fd("minishell: command not found: ", STDERR_FILENO);
 		ft_putstr_fd(cmd->args[0], STDERR_FILENO);
 		ft_putstr_fd("\n", STDERR_FILENO);
-		cleanup_child_extended(cmd, tokens, info, 127);
+		cleanup_child(cmd, tokens, info, 127);
 	}
 	if (access(path, X_OK) != 0)
 	{
     	perror(cmd->args[0]);
 		free(path);
-    	cleanup_child_extended(cmd, tokens, info, 126);
+    	cleanup_child(cmd, tokens, info, 126);
 	}
 	execve(path, cmd->args, *(info->env));
 	perror("execve");
 	free(path);
-	cleanup_child_extended(cmd, tokens, info, 126);
+	cleanup_child(cmd, tokens, info, 126);
 }
 
 static void	child_run(t_command *cmd, t_pipe_info *info, t_token *tokens)
 {
 	if (apply_redirs(cmd, info->env) != 0)
-		cleanup_child_extended(cmd, NULL, info, 1);
+		cleanup_child(cmd, NULL, info, 1);
 	if (is_builtin_command(cmd))
 		child_run_builtin(cmd, info, tokens);
 	else
@@ -142,7 +136,7 @@ static void	child_dup2(int oldfd, int newfd, t_command *cmd, t_pipe_info *info, 
 	if (dup2(oldfd, newfd) == -1)
 	{
 		perror("dup2");
-		cleanup_child_extended(cmd, tokens, info, 1);
+		cleanup_child(cmd, tokens, info, 1);
 	}
 }
 
@@ -212,28 +206,19 @@ static int	preprocess_pipeline_heredocs(t_command *cmds, char **env)
 
 	cur = cmds;
 	backup_stdin = dup(STDIN_FILENO); 
-	
 	while (cur)
 	{
 		if (cur->heredocs)
 		{
 			status = process_heredocs(cur, env);
-			if (status == 130) 
+			if (status)
 			{
-				dup2(backup_stdin, STDIN_FILENO);
-				close(backup_stdin);
-				return (130);
-			}
-			else if (status != 0)
-			{
-				dup2(backup_stdin, STDIN_FILENO);
 				close(backup_stdin);
 				return (status);
 			}
 		}
 		cur = cur->next;
 	}
-	
 	close(backup_stdin);
 	return (0);
 }
@@ -243,7 +228,6 @@ int	run_pipeline(t_command *cmds, char ***env, t_token *tokens)
 	t_pipe_info	info;
 	int			status;
 	int			heredoc_status;
-
 
 	heredoc_status = preprocess_pipeline_heredocs(cmds, *env);
 	if (heredoc_status)

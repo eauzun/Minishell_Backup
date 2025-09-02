@@ -65,3 +65,17 @@ char	*collect_filename_words(t_token **cur_t)
 	}
 	return (acc);
 }
+
+size_t	ft_strcpy(char *dst, const char *src)
+{
+	size_t	i;
+
+	i = 0;
+	while (src[i] != '\0')
+	{
+		dst[i] = src[i];
+		i++;
+	}
+	dst[i] = '\0';
+	return (i);
+}

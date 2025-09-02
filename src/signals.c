@@ -30,11 +30,12 @@ void	set_child_signals(void)
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
 }
-int g_should_exit(int set)
-{
-    static int flag = 0;    // 0: devam, 1: çık
 
-    if (set >= 0)
-        flag = set;
-    return (flag);
+int	g_should_exit(int set)
+{
+	static int	flag = 0;
+
+	if (set >= 0)
+		flag = set;
+	return (flag);
 }

@@ -1,6 +1,6 @@
 #include "../minishell.h"
 
-t_token	*handle_special(const char *line, size_t *i)
+static t_token	*handle_special(const char *line, size_t *i)
 {
 	if (line[*i] == '\'')
 		return (single_quote(line, i));
@@ -13,7 +13,7 @@ t_token	*handle_special(const char *line, size_t *i)
 	return (NULL);
 }
 
-t_token	*token_word(const char *line, size_t *i)
+static t_token	*token_word(const char *line, size_t *i)
 {
 	size_t	start;
 

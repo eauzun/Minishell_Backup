@@ -6,7 +6,7 @@ void	syntax_error(const char *msg)
 	g_exit_code(258);
 }
 
-int	count_args(char **args)
+static int	count_args(char **args)
 {
 	int	count;
 
@@ -16,21 +16,6 @@ int	count_args(char **args)
 	return (count);
 }
 
-static void	free_args(char **args)
-{
-	int	i;
-
-	if (!args)
-		return ;
-	i = 0;
-	while (args[i])
-	{
-		free(args[i]);
-		i++;
-	}
-	free(args);
-}
-
 void	add_argument(t_command *cmd, char *arg)
 {
 	char	**new_args;
@@ -38,11 +23,11 @@ void	add_argument(t_command *cmd, char *arg)
 	int		i;
 
 	if (!cmd || !arg)
-		return ;	
+		return ;
 	count = count_args(cmd->args);
 	new_args = malloc(sizeof(char *) * (count + 2));
 	if (!new_args)
-		return ; 
+		return ;
 	i = 0;
 	while (i < count)
 	{

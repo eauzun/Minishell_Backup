@@ -1,6 +1,11 @@
 #include "../minishell.h"
 
-int	check_pipe_syntax(t_token *cur)
+int	is_word(t_token *token)
+{
+	return (token && token->type >= T_WORD && token->type <= T_WORD_DOUBLE);
+}
+
+static int	check_pipe_syntax(t_token *cur)
 {
 	if (!cur->next || cur->next->type == T_PIPE)
 	{
@@ -10,7 +15,7 @@ int	check_pipe_syntax(t_token *cur)
 	return (0);
 }
 
-int	check_redir_syntax(t_token *cur)
+static int	check_redir_syntax(t_token *cur)
 {
 	if (!is_word(cur->next))
 	{
@@ -25,7 +30,7 @@ int	check_redir_syntax(t_token *cur)
 	return (0);
 }
 
-int	check_first_token(t_token *tokens)
+static int	check_first_token(t_token *tokens)
 {
 	if (tokens->type == T_PIPE)
 	{
