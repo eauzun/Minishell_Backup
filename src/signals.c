@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hialpagu <hialpagu@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: emuzun <emuzun@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 18:26:11 by hialpagu          #+#    #+#             */
-/*   Updated: 2025/09/02 18:27:47 by hialpagu         ###   ########.fr       */
+/*   Updated: 2025/09/02 23:49:51 by emuzun           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,4 +46,16 @@ void	heredoc_signal_handler(int sig)
 	g_exit_code(130);
 	rl_replace_line("", 0);
 	rl_done = 1;
+}
+
+void	set_execution_signals(void)
+{
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
+}
+
+void	restore_signals(void)
+{
+	signal(SIGINT, signal_handler);
+	signal(SIGQUIT, SIG_IGN);
 }

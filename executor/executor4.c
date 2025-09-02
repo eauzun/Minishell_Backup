@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor4.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hialpagu <hialpagu@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: emuzun <emuzun@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 15:55:33 by hialpagu          #+#    #+#             */
-/*   Updated: 2025/09/02 15:55:34 by hialpagu         ###   ########.fr       */
+/*   Updated: 2025/09/02 23:51:08 by emuzun           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,26 @@ static void	execve_command(char *path, t_command *cmd, char **env)
 	exit(126);
 }
 
+static void	handle_child_process(char *path, t_command *cmd, char **env)
+{
+	set_child_signals();
+	execve_command(path, cmd, env);
+}
+
+static int	handle_parent_process(pid_t pid, char *path)
+{
+	int	status;
+
+	waitpid(pid, &status, 0);
+	free(path);
+	restore_signals();
+	if (WIFEXITED(status))
+		return (WEXITSTATUS(status));
+	if (WIFSIGNALED(status))
+		return (128 + WTERMSIG(status));
+	return (1);
+}
+
 int	run_external_command(t_command *cmd, char ***env)
 {
 	pid_t	pid;
@@ -63,18 +83,16 @@ int	run_external_command(t_command *cmd, char ***env)
 	path = command_path(cmd, env, &status);
 	if (!path)
 		return (status);
+	set_execution_signals();
 	pid = fork();
 	if (pid == -1)
 	{
 		perror("fork");
 		free(path);
+		restore_signals();
 		return (1);
 	}
 	if (pid == 0)
-		execve_command(path, cmd, *env);
-	waitpid(pid, &status, 0);
-	free(path);
-	if (WIFEXITED(status))
-		return (WEXITSTATUS(status));
-	return (1);
+		handle_child_process(path, cmd, *env);
+	return (handle_parent_process(pid, path));
 }

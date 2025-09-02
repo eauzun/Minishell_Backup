@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hialpagu <hialpagu@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: emuzun <emuzun@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 15:59:17 by hialpagu          #+#    #+#             */
-/*   Updated: 2025/09/02 18:52:45 by hialpagu         ###   ########.fr       */
+/*   Updated: 2025/09/02 23:51:32 by emuzun           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -211,5 +211,6 @@ int			should_exit_program(void);
 long long	ft_atoll(char *str);
 int			is_numeric(char *str);
 int			check_should_exit(void);
-
+void	set_execution_signals(void);
+void	restore_signals(void);
 #endif
