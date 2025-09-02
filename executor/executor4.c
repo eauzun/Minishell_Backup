@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   executor4.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hialpagu <hialpagu@student.42istanbul.c    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/02 15:55:33 by hialpagu          #+#    #+#             */
+/*   Updated: 2025/09/02 15:55:34 by hialpagu         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
 static int	command_not_found(char *cmd)
@@ -32,12 +44,12 @@ static char	*command_path(t_command *cmd, char ***env, int *status)
 static void	execve_command(char *path, t_command *cmd, char **env)
 {
 	execve(path, cmd->args, env);
-	if (cmd->args[0] && (cmd->args[0][0] == '/' ||
-        (cmd->args[0][0] == '.' && cmd->args[0][1] == '/')))
-    {
-        free(path);
-        exit(0);
-    }
+	if (cmd->args[0] && (cmd->args[0][0] == '/'
+		|| (cmd->args[0][0] == '.' && cmd->args[0][1] == '/')))
+	{
+		free(path);
+		exit(0);
+	}
 	perror("execve");
 	exit(126);
 }

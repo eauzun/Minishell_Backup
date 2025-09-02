@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   executor3.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hialpagu <hialpagu@student.42istanbul.c    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/02 15:55:27 by hialpagu          #+#    #+#             */
+/*   Updated: 2025/09/02 15:55:28 by hialpagu         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
 int	check_command_path(char *path)
@@ -26,7 +38,7 @@ static void	free_str_array(char **arr)
 	int	i;
 
 	if (!arr)
-		return;
+		return ;
 	i = 0;
 	while (arr[i])
 	{
@@ -35,6 +47,7 @@ static void	free_str_array(char **arr)
 	}
 	free(arr);
 }
+
 static char	*build_path(char *dir, char *cmd)
 {
 	char	*tmp;
@@ -47,6 +60,7 @@ static char	*build_path(char *dir, char *cmd)
 	free(tmp);
 	return (full_path);
 }
+
 static char	*check_and_return(char *full_path, char **path)
 {
 	if (access(full_path, X_OK) == 0)
@@ -57,6 +71,7 @@ static char	*check_and_return(char *full_path, char **path)
 	free(full_path);
 	return (NULL);
 }
+
 char	*find_in_path(char *cmd, char **env)
 {
 	char	**path;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd_utils.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emuzun <emuzun@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: hialpagu <hialpagu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/02 14:06:46 by emuzun            #+#    #+#             */
-/*   Updated: 2025/09/02 14:06:47 by emuzun           ###   ########.fr       */
+/*   Created: 2025/09/02 16:02:24 by emuzun            #+#    #+#             */
+/*   Updated: 2025/09/02 16:04:59 by hialpagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,9 +63,13 @@ int	update_pwd_vars(char ***env, char *old_pwd, char *new_pwd)
 	return (result);
 }
 
-void	ft_putstr_fd(char *s, int fd)
+void	print_pwd_if_dash(char *path, char *args_1)
 {
-	if (!s)
-		return ;
-	write(fd, s, ft_strlen(s));
+	if (ft_strcmp(args_1, "-") == 0)
+	{
+		if (write(1, path, ft_strlen(path)) == -1)
+			return ;
+		if (write(1, "\n", 1) == -1)
+			return ;
+	}
 }

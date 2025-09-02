@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: emuzun <emuzun@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/02 15:59:17 by hialpagu          #+#    #+#             */
+/*   Updated: 2025/09/02 18:03:54 by emuzun           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
@@ -128,7 +140,7 @@ char		*get_home_path(char **env);
 char		*get_oldpwd_path(char **env);
 char		*get_target_path(char **args, char **env);
 int			update_pwd_vars(char ***env, char *old_pwd, char *new_pwd);
-void		ft_putstr_fd(char *s, int fd);
+void		print_pwd_if_dash(char *path, char *args_1);
 int			builtin_echo(char **args);
 int			builtin_env(char **env);
 int			builtin_exit(char **args);
@@ -163,6 +175,7 @@ t_heredoc	*create_heredoc(char *delimiter, int expand_vars);
 void		free_heredocs(t_heredoc *heredocs);
 void		add_heredoc(t_command *cmd, char *delimiter, int expand_vars);
 void		cleanup_heredoc_interrupt(t_command *cmd);
+void		ft_putstr_fd(char *s, int fd);
 int			read_heredoc_line(char *delimiter, int expand,
 				char **env, int write_fd);
 int			run_pipeline(t_command *cmds, char ***env, t_token *tokens);
@@ -194,5 +207,6 @@ char		*ft_itoa(int n);
 int			ft_isalnum(int c);
 char		*ft_strchr(const char *s, int c);
 char		*ft_strrchr(const char *str, int c);
+int     should_exit_program(void);
 
 #endif

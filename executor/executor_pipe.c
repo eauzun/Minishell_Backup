@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   executor_pipe.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hialpagu <hialpagu@student.42istanbul.c    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/02 15:55:15 by hialpagu          #+#    #+#             */
+/*   Updated: 2025/09/02 15:55:15 by hialpagu         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
 static int	cmd_count(t_command *cmds)
@@ -69,8 +81,6 @@ static int	init_pipe_info(t_pipe_info *info, t_command *cmds)
 	}
 	return (0);
 }
-
-
 
 int	run_pipeline(t_command *cmds, char ***env, t_token *tokens)
 {

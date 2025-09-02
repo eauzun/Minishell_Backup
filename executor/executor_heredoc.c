@@ -1,13 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   executor_heredoc.c                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: emuzun <emuzun@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/02 16:03:14 by emuzun            #+#    #+#             */
+/*   Updated: 2025/09/02 18:07:21 by emuzun           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
-void	heredoc_signal_handler(int sig)
-{
-	(void)sig;
-	write(1, "\n", 1);
-	g_exit_code(130);
-	rl_replace_line("", 0);
-	rl_done = 1;
-}
 
 int	process_single_heredoc(t_heredoc *heredoc, char **env)
 {

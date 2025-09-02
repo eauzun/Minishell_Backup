@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   executor2.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hialpagu <hialpagu@student.42istanbul.c    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/02 15:55:24 by hialpagu          #+#    #+#             */
+/*   Updated: 2025/09/02 15:55:25 by hialpagu         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
 int	setup_command_fds(t_command *cmd, char ***env, int *save_fds)
@@ -28,6 +40,7 @@ int	setup_command_fds(t_command *cmd, char ***env, int *save_fds)
 	}
 	return (0);
 }
+
 int	is_builtin_command(t_command *cmd)
 {
 	if (!cmd || !cmd->args || !cmd->args[0])

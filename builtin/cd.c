@@ -3,25 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emuzun <emuzun@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: hialpagu <hialpagu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 14:06:53 by emuzun            #+#    #+#             */
-/*   Updated: 2025/09/02 14:06:54 by emuzun           ###   ########.fr       */
+/*   Updated: 2025/09/02 15:54:03 by hialpagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
-static void	print_pwd_if_dash(char *path, char *args_1)
-{
-	if (ft_strcmp(args_1, "-") == 0)
-	{
-		if (write(1, path, ft_strlen(path)) == -1)
-			return ;
-		if (write(1, "\n", 1) == -1)
-			return ;
-	}
-}
 
 static int	cd_too_many_args(char **args)
 {

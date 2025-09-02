@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   executor_heredoc_utils.c                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: emuzun <emuzun@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/02 16:03:08 by emuzun            #+#    #+#             */
+/*   Updated: 2025/09/02 16:03:09 by emuzun           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
 t_heredoc	*create_heredoc(char *delimiter, int expand_vars)
@@ -64,4 +76,11 @@ void	cleanup_heredoc_interrupt(t_command *cmd)
 		free_heredocs(cmd->heredocs);
 		cmd->heredocs = NULL;
 	}
+}
+
+void	ft_putstr_fd(char *s, int fd)
+{
+	if (!s)
+		return ;
+	write(fd, s, ft_strlen(s));
 }

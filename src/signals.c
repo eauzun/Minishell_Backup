@@ -1,41 +1,48 @@
 #include "../minishell.h"
 
-int	g_exit_code(int code)
-{
-	static int	temp;
 
-	if (code != -1)
-		temp = code;
-	return (temp);
+int g_exit_code(int code)
+{
+    static int temp = 0; 
+    
+    if (code != -1)
+        temp = code;
+    return (temp);
 }
 
-void	signal_handler(int signal)
+
+int should_exit_program(void)
 {
-	(void)signal;
-	write(1, "\n", 1);
-	rl_replace_line("", 0);
-	rl_on_new_line();
-	rl_redisplay();
-	g_exit_code(130);
+    return (g_exit_code(-1) > 0);
 }
 
-void	set_signals(void)
+void signal_handler(int signal)
 {
-	signal(SIGINT, signal_handler);
-	signal(SIGQUIT, SIG_IGN);
+    (void)signal;
+    write(1, "\n", 1);
+    rl_replace_line("", 0);
+    rl_on_new_line();
+    rl_redisplay();
+    g_exit_code(130);
 }
 
-void	set_child_signals(void)
+void set_signals(void)
 {
-	signal(SIGINT, SIG_DFL);
-	signal(SIGQUIT, SIG_DFL);
+    signal(SIGINT, signal_handler);
+    signal(SIGQUIT, SIG_IGN);
 }
 
-int	g_should_exit(int set)
+void set_child_signals(void)
 {
-	static int	flag = 0;
+    signal(SIGINT, SIG_DFL);
+    signal(SIGQUIT, SIG_DFL);
+}
 
-	if (set >= 0)
-		flag = set;
-	return (flag);
+void heredoc_signal_handler(int sig)
+{
+    (void)sig;
+    write(1, "\n", 1);
+    g_exit_code(130);
+    rl_replace_line("", 0);
+    rl_done = 1;
 }
