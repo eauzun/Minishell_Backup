@@ -216,6 +216,23 @@ int			setup_command_fds(t_command *cmd, char ***env, int *save_fds);
 void		close_all_pipes(int *pipes, int count);
 char    	**ft_split(char const *s, char c);
 
+/* Pipeline Setup Functions (pipeline_setup.c) */
+void	cleanup_child(t_command *cmd, t_token *tokens,
+			t_pipe_info *info, int exit_code);
+void	close_all_pipes(int *pipes, int count);
+int		preprocess_pipeline_heredocs(t_command *cmds, char **env);
+
+/* Child Executor Functions (child_executor.c) */
+void	child_run_builtin(t_command *cmd, t_pipe_info *info, t_token *tokens);
+void	child_run_external(t_command *cmd, t_pipe_info *info, t_token *tokens);
+
+/* Child Process Functions (child_process.c) */
+void	child_process(t_command *cmd, int index, t_pipe_info *info,
+			t_token *tokens);
+
+/* Pipeline Executor Functions (pipeline_executor.c) */
+int		run_pipeline(t_command *cmds, char ***env, t_token *tokens);
+void	child_run(t_command *cmd, t_pipe_info *info, t_token *tokens);
 
 int			read_heredoc_line(char *delimiter, int expand, char **env, int write_fd);
 int 		process_heredocs(t_command *cmd, char **env);
@@ -225,5 +242,6 @@ void		free_heredocs(t_heredoc *heredocs);
 void		add_heredoc(t_command *cmd, char *delimiter, int expand_vars);
 void		cleanup_heredoc_interrupt(t_command *cmd);
 void		heredoc_signal_handler(int sig);
-void		cleanup_child(t_command *cmd, t_token *tokens, t_pipe_info *info, int exit_code);
+
+
 #endif
