@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exit.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: your_login <your_login@student.42.fr>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/01/01 00:00:00 by your_login       #+#    #+#             */
+/*   Updated: 2024/01/01 00:00:00 by your_login      ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../minishell.h"
 
 static int	is_numeric(char *str)
@@ -41,15 +53,10 @@ static long long	ft_atoll(char *str)
 	return (result * sign);
 }
 
-int	builtin_exit(char **args)
+static int	handle_exit_cases(char **args, int argc)
 {
 	long long	n;
-	int			argc;
 
-	ft_putstr_fd("exit\n", 1);
-	argc = 0;
-	while (args && args[argc])
-		argc++;
 	if (argc == 1)
 	{
 		g_should_exit(1);
@@ -71,4 +78,15 @@ int	builtin_exit(char **args)
 	n = ft_atoll(args[1]);
 	g_should_exit(1);
 	return (g_exit_code((int)((unsigned char)n)));
+}
+
+int	builtin_exit(char **args)
+{
+	int	argc;
+
+	ft_putstr_fd("exit\n", 1);
+	argc = 0;
+	while (args && args[argc])
+		argc++;
+	return (handle_exit_cases(args, argc));
 }

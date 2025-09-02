@@ -160,7 +160,7 @@ void		heredoc_signal_handler(int sig);
 int			process_single_heredoc(t_heredoc *heredoc, char **env);
 int			process_heredocs(t_command *cmd, char **env);
 t_heredoc	*create_heredoc(char *delimiter, int expand_vars);
-void		free_heredocs(t_heredocs *heredocs);
+void		free_heredocs(t_heredoc *heredocs);
 void		add_heredoc(t_command *cmd, char *delimiter, int expand_vars);
 void		cleanup_heredoc_interrupt(t_command *cmd);
 int			read_heredoc_line(char *delimiter, int expand,
