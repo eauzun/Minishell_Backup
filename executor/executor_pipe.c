@@ -13,35 +13,6 @@ static int	cmd_count(t_command *cmds)
 	return (count);
 }
 
-static int	*setup_pipes(int count)
-{
-	int	*pipes;
-	int	i;
-
-	if (count <= 0)
-		return (NULL);
-	pipes = malloc(sizeof(int) * (count * 2));
-	if (!pipes)
-		return (NULL);
-	i = 0;
-	while (i < count)
-	{
-		if (pipe(&pipes[i * 2]) == -1)
-		{
-			while (i > 0)
-			{
-				close(pipes[(i - 1) * 2]);
-				close(pipes[(i - 1) * 2 + 1]);
-				i--;
-			}
-			free(pipes);
-			return (NULL);
-		}
-		i++;
-	}
-	return (pipes);
-}
-
 static int	work_child_work(t_command *cmds, t_pipe_info *info,
 						t_token *tokens)
 {
@@ -99,13 +70,7 @@ static int	init_pipe_info(t_pipe_info *info, t_command *cmds)
 	return (0);
 }
 
-static void	cleanup_pipe_info(t_pipe_info *info)
-{
-	if (info->pipes)
-		free(info->pipes);
-	if (info->pids)
-		free(info->pids);
-}
+
 
 int	run_pipeline(t_command *cmds, char ***env, t_token *tokens)
 {

@@ -34,3 +34,11 @@ void	close_all_pipes(int *pipes, int count)
 		i++;
 	}
 }
+
+void	cleanup_pipe_info(t_pipe_info *info)
+{
+	if (info->pipes)
+		free(info->pipes);
+	if (info->pids)
+		free(info->pids);
+}
