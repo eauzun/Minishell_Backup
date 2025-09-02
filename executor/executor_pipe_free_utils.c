@@ -1,3 +1,4 @@
+#include "../minishell.h"
 void	cleanup_child(t_command *cmd, t_token *tokens,
 									t_pipe_info *info, int exit_code)
 {
