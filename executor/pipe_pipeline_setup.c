@@ -1,18 +1,5 @@
 #include "../minishell.h"
 
-static int	cmd_count(t_command *cmds)
-{
-	int	count;
-
-	count = 0;
-	while (cmds)
-	{
-		count++;
-		cmds = cmds->next;
-	}
-	return (count);
-}
-
 int	*setup_pipes(int count)
 {
 	int	*pipes;
