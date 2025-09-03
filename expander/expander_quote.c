@@ -6,13 +6,13 @@
 /*   By: hialpagu <hialpagu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 15:56:58 by hialpagu          #+#    #+#             */
-/*   Updated: 2025/09/02 15:56:59 by hialpagu         ###   ########.fr       */
+/*   Updated: 2025/09/03 05:54:47 by hialpagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-static void	drop_node(t_token **prev, t_token **cur, t_token **new_head)
+static void	delete_token(t_token **prev, t_token **cur, t_token **new_head)
 {
 	t_token	*next;
 
@@ -38,12 +38,12 @@ t_token	*remove_empty_unquoted(t_token *head)
 	while (cur)
 	{
 		if (cur->type == T_WORD && (!cur->str || !cur->str[0]))
+			delete_token(&prev, &cur, &new_head);
+		else
 		{
-			drop_node(&prev, &cur, &new_head);
-			continue ;
+			prev = cur;
+			cur = cur->next;
 		}
-		prev = cur;
-		cur = cur->next;
 	}
 	return (new_head);
 }

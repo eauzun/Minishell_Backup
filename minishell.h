@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emuzun <emuzun@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: hialpagu <hialpagu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 15:59:17 by hialpagu          #+#    #+#             */
-/*   Updated: 2025/09/02 23:51:32 by emuzun           ###   ########.fr       */
+/*   Updated: 2025/09/03 08:51:48 by hialpagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,6 @@ typedef struct s_pipe_info
 	char	***env;
 }	t_pipe_info;
 
-int			main(int ac, char **av, char **env);
 int			minishell(char ***env);
 void		execute_line(const char *line, char ***env, int *exit_status);
 int			run_command_line(t_command *cmds, char ***env, t_token *tokens);
@@ -110,17 +109,9 @@ t_token		*new_token(t_token_type type, const char *start, size_t len);
 void		add_token(t_token **list, t_token *token);
 void		free_token(t_token *list);
 void		skip_whitespace(const char *line, size_t *i);
-char		*join_and_free(char *s1, char *s2);
 t_token		*expand_tokens(t_token *tokens, char **env);
 t_token		*remove_empty_unquoted(t_token *head);
-char		*expand_single_quote(char *str);
-char		*expand_double_quote(const char *str, char **env);
 char		*expand_regular_word(char *str, char **env);
-char		*quoted_next_segment(const char *str, size_t *i,
-				char **env, char quote);
-char		*expand_in_quotes(const char *str, size_t *i,
-				char **env, char quote);
-char		*expand_next_segment(const char *str, size_t *i, char **env);
 char		*expand_string(const char *str, char **env);
 char		*get_env_value(char *name, char **env);
 char		*handle_dollar(char *str, size_t *i, char **env);
@@ -129,7 +120,7 @@ t_command	*create_command(void);
 void		link_commands(t_command **head, t_command *new_cmd);
 void		free_commands(t_command *cmd);
 void		free_redirs(t_redir *redir);
-void		parse_redirections(t_token **cur, t_command *cmd);
+int			handle_redirection(t_token **cur, t_command *cmd);
 void		syntax_error(const char *msg);
 void		add_argument(t_command *cmd, char *arg);
 void		add_redir(t_command *cmd, t_redir_type type, char *file);
@@ -196,7 +187,7 @@ char		**ft_split(char const *s, char c);
 size_t		ft_strlen(const char *s);
 char		*ft_strdup(const char *s);
 bool		is_only_space(const char *s);
-char		*collect_filename_words(t_token **cur_t);
+char		*create_word(t_token **cur);
 size_t		ft_strcpy(char *dst, const char *src);
 char		*ft_strjoin(char const *s1, char const *s2);
 char		*ft_substr(char const *s, unsigned int start, size_t len);
@@ -211,6 +202,10 @@ int			should_exit_program(void);
 long long	ft_atoll(char *str);
 int			is_numeric(char *str);
 int			check_should_exit(void);
-void	set_execution_signals(void);
-void	restore_signals(void);
+void		set_execution_signals(void);
+void		restore_signals(void);
+void		handle_child_process(char *path, t_command *cmd, char **env);
+void		set_execution_signals(void);
+void		restore_signals(void);
+
 #endif

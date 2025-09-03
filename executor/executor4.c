@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor4.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emuzun <emuzun@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: hialpagu <hialpagu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 15:55:33 by hialpagu          #+#    #+#             */
-/*   Updated: 2025/09/02 23:51:08 by emuzun           ###   ########.fr       */
+/*   Updated: 2025/09/03 00:10:41 by hialpagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,25 +39,6 @@ static char	*command_path(t_command *cmd, char ***env, int *status)
 	}
 	*status = 0;
 	return (path);
-}
-
-static void	execve_command(char *path, t_command *cmd, char **env)
-{
-	execve(path, cmd->args, env);
-	if (cmd->args[0] && (cmd->args[0][0] == '/'
-		|| (cmd->args[0][0] == '.' && cmd->args[0][1] == '/')))
-	{
-		free(path);
-		exit(0);
-	}
-	perror("execve");
-	exit(126);
-}
-
-static void	handle_child_process(char *path, t_command *cmd, char **env)
-{
-	set_child_signals();
-	execve_command(path, cmd, env);
 }
 
 static int	handle_parent_process(pid_t pid, char *path)

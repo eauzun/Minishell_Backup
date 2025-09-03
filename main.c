@@ -6,7 +6,7 @@
 /*   By: hialpagu <hialpagu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 18:49:32 by hialpagu          #+#    #+#             */
-/*   Updated: 2025/09/02 18:52:05 by hialpagu         ###   ########.fr       */
+/*   Updated: 2025/09/03 07:27:05 by hialpagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ static int	get_real_exit_code(void)
 
 	code = g_exit_code(-1);
 	if (code >= 256)
-		return (code - 256);
+		return (code % 256);
 	return (code);
 }
 

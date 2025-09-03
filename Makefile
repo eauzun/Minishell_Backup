@@ -1,12 +1,12 @@
 NAME    = minishell
 CC      = gcc
-CFLAGS  = #-Wall -Wextra -Werror
+CFLAGS  = -Wall -Wextra -Werror -g
 RM      = rm -f
 RL_LIBS = -lreadline -lncurses
 
-SRC = main.c src/env_data.c src/signals.c \
+SRC = main.c src/env_data.c src/signals.c src/signals2.c \
 	lexer/lexer.c lexer/lexer_special.c lexer/lexer_utils.c \
-	expander/expander.c expander/expander_quote.c expander/expander_utils.c expander/expander_variables.c \
+	expander/expander.c expander/expander_quote.c expander/expander_variables.c \
 	expander/expander_type.c \
 	parser/parser.c parser/parser_valid.c parser/parser_redir.c \
 	parser/parser_utils.c parser/parser_cmd.c parser/parser_free_utils.c \

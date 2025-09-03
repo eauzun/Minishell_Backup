@@ -3,31 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emuzun <emuzun@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: hialpagu <hialpagu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 16:03:47 by emuzun            #+#    #+#             */
-/*   Updated: 2025/09/02 16:03:48 by emuzun           ###   ########.fr       */
+/*   Updated: 2025/09/03 05:50:37 by hialpagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-char	*join_and_free(char *s1, char *s2)
-{
-	char	*result;
-
-	result = ft_strjoin(s1, s2);
-	free(s1);
-	free(s2);
-	return (result);
-}
-
 static char	*get_expanded_str(t_token *token, char **env)
 {
 	if (token->type == T_WORD_SINGLE)
-		return (expand_single_quote(token->str));
+		return (ft_strdup(token->str));
 	else if (token->type == T_WORD_DOUBLE)
-		return (expand_double_quote(token->str, env));
+		return (expand_string(token->str, env));
 	else if (token->type == T_WORD)
 		return (expand_regular_word(token->str, env));
 	return (NULL);

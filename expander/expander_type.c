@@ -3,23 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   expander_type.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emuzun <emuzun@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: hialpagu <hialpagu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 16:03:38 by emuzun            #+#    #+#             */
-/*   Updated: 2025/09/02 16:03:39 by emuzun           ###   ########.fr       */
+/*   Updated: 2025/09/03 05:23:41 by hialpagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-char	*expand_single_quote(char *str)
+static char	*next_segment(const char *str, size_t *i, char **env)
 {
-	return (ft_strdup(str));
-}
-
-static char	*double_quote_part(const char *str, size_t *i, char **env)
-{
-	char	*part;
 	size_t	start;
 
 	if (str[*i] == '$')
@@ -27,11 +21,10 @@ static char	*double_quote_part(const char *str, size_t *i, char **env)
 	start = *i;
 	while (str[*i] && str[*i] != '$')
 		(*i)++;
-	part = ft_substr(str, start, *i - start);
-	return (part);
+	return (ft_substr(str, start, *i - start));
 }
 
-char	*expand_double_quote(const char *str, char **env)
+char	*expand_string(const char *str, char **env)
 {
 	char	*res;
 	char	*part;
@@ -44,7 +37,7 @@ char	*expand_double_quote(const char *str, char **env)
 		return (NULL);
 	while (str[i])
 	{
-		part = double_quote_part(str, &i, env);
+		part = next_segment(str, &i, env);
 		if (!part)
 		{
 			free(res);

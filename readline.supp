@@ -4,19 +4,3 @@
     ...
     obj:*/libreadline.so.*
 }
-
-{
-    ignore_libhistory_leaks
-    Memcheck:Leak
-    ...
-    obj:*/libhistory.so.*
-}
-
-{
-    ignore_libc_pthread_leaks
-    Memcheck:Leak
-    ...
-    fun:pthread_create
-    fun:start_thread
-    fun:clone
-}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emuzun <emuzun@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: hialpagu <hialpagu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 18:29:04 by hialpagu          #+#    #+#             */
-/*   Updated: 2025/09/02 22:45:56 by emuzun           ###   ########.fr       */
+/*   Updated: 2025/09/03 07:23:30 by hialpagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ static int	exit_non_numeric(char *arg)
 	ft_putstr_fd("minishell: exit: ", 2);
 	ft_putstr_fd(arg, 2);
 	ft_putstr_fd(": numeric argument required\n", 2);
-	return(0);
+	return (g_exit_code(258));
 }
 
 static int	exit_too_many(void)
@@ -51,18 +51,19 @@ static int	exit_default(void)
 int	builtin_exit(char **args)
 {
 	int	argc;
-	
-	ft_putstr_fd("exit\n", 1);
+
 	argc = 0;
 	while (args && args[argc])
-	argc++;
+		argc++;
 	if (argc == 1)
+	{
+		ft_putstr_fd("exit\n", 1);
 		return (exit_default());
+	}
 	if (!is_numeric(args[1]))
 		return (exit_non_numeric(args[1]));
 	if (argc > 2)
 		return (exit_too_many());
-	if(is_numeric(args[1]))	
-		return (exit_numeric(args[1]));
-	return (0);
+	ft_putstr_fd("exit\n", 1);
+	return (exit_numeric(args[1]));
 }

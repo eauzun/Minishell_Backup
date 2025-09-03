@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emuzun <emuzun@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: hialpagu <hialpagu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 16:04:14 by emuzun            #+#    #+#             */
-/*   Updated: 2025/09/02 16:04:15 by emuzun           ###   ########.fr       */
+/*   Updated: 2025/09/03 08:51:38 by hialpagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,28 +55,32 @@ bool	is_only_space(const char *s)
 	return (true);
 }
 
-char	*collect_filename_words(t_token **cur_t)
+char	*create_word(t_token **cur)
 {
 	char	*acc;
 	char	*tmp;
+	t_token	*t;
 	int		first;
 
+	t = *cur;
 	acc = ft_strdup("");
 	if (!acc)
 		return (NULL);
 	first = 1;
-	while (*cur_t && is_word(*cur_t) && (first || (*cur_t)->sep_ws == 0))
+	while (t && is_word(t) && (first || t->sep_ws == 0))
 	{
-		tmp = ft_strjoin(acc, (*cur_t)->str);
+		tmp = ft_strjoin(acc, t->str);
 		free(acc);
 		if (!tmp)
 			return (NULL);
 		acc = tmp;
-		*cur_t = (*cur_t)->next;
+		t = t->next;
 		first = 0;
 	}
+	*cur = t;
 	return (acc);
 }
+
 
 size_t	ft_strcpy(char *dst, const char *src)
 {

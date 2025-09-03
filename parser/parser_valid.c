@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_valid.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emuzun <emuzun@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: hialpagu <hialpagu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 16:04:03 by emuzun            #+#    #+#             */
-/*   Updated: 2025/09/02 16:04:04 by emuzun           ###   ########.fr       */
+/*   Updated: 2025/09/03 07:31:16 by hialpagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

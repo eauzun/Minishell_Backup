@@ -3,54 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emuzun <emuzun@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: hialpagu <hialpagu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 16:04:07 by emuzun            #+#    #+#             */
-/*   Updated: 2025/09/02 16:04:08 by emuzun           ###   ########.fr       */
+/*   Updated: 2025/09/03 08:52:03 by hialpagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-static char	*gather_word(t_token **cur)
-{
-	char	*acc;
-	char	*tmp;
-	t_token	*t;
-
-	t = *cur;
-	acc = ft_strdup("");
-	if (!acc)
-		return (NULL);
-	while (is_word(t))
-	{
-		if (t == *cur || t->sep_ws == 0)
-		{
-			tmp = ft_strjoin(acc, t->str);
-			free(acc);
-			if (!tmp)
-				return (NULL);
-			acc = tmp;
-			t = t->next;
-		}
-		else
-			break ;
-	}
-	*cur = t;
-	return (acc);
-}
-
-static int	handle_redirection(t_token **cur, t_command *cmd)
-{
-	parse_redirections(cur, cmd);
-	return (1);
-}
-
 static int	handle_word(t_token **cur, t_command *cmd)
 {
 	char	*merged;
 
-	merged = gather_word(cur);
+	merged = create_word(cur);
 	if (!merged)
 		return (0);
 	add_argument(cmd, merged);
@@ -88,25 +54,28 @@ static t_command	*parse_single_command(t_token **tokens)
 
 t_command	*parse_tokens(t_token *tokens)
 {
-	t_command	*head;
+	t_command	*cmd_list;
 	t_command	*cmd;
 
-	head = NULL;
+	cmd_list = NULL;
 	if (!tokens)
 		return (NULL);
 	if (validate_syntax(tokens))
+	{
+		g_exit_code(2);
 		return (NULL);
+	}
 	while (tokens)
 	{
 		cmd = parse_single_command(&tokens);
 		if (!cmd)
 		{
-			free_commands(head);
+			free_commands(cmd_list);
 			return (NULL);
 		}
-		link_commands(&head, cmd);
+		link_commands(&cmd_list, cmd);
 		if (tokens && tokens->type == T_PIPE)
 			tokens = tokens->next;
 	}
-	return (head);
+	return (cmd_list);
 }

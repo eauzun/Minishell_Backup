@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander_variables.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emuzun <emuzun@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: hialpagu <hialpagu@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/02 16:03:43 by emuzun            #+#    #+#             */
-/*   Updated: 2025/09/02 16:03:44 by emuzun           ###   ########.fr       */
+/*   Updated: 2025/09/03 00:50:18 by hialpagu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
